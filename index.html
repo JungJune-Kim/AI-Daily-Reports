@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Daily Reports — 통합 대시보드</title>
+  <script src="reports-list.js"></script>
+  <style>
+    :root {
+      --bg:       #0b1120;
+      --surface:  #111827;
+      --card:     #1a2236;
+      --card2:    #1f2d45;
+      --border:   #263352;
+      --border2:  #1e293b;
+      --text:     #e2e8f0;
+      --muted:    #64748b;
+      --muted2:   #94a3b8;
+      --accent:   #6366f1;
+      --accent2:  #06b6d4;
+      --green:    #22c55e;
+      --yellow:   #f59e0b;
+      --red:      #f43f5e;
+      --orange:   #fb923c;
+      --purple:   #a78bfa;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ─── Scrollbar ─── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #2d3f5e; border-radius: 3px; }
+
+    /* ─── Sidebar ─── */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 220px;
+      height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border2);
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+      overflow-y: auto;
+    }
+    .sidebar-logo {
+      padding: 24px 20px 16px;
+      border-bottom: 1px solid var(--border2);
+    }
+    .sidebar-logo .logo-icon {
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+    .sidebar-logo h1 {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent2);
+    }
+    .sidebar-logo p {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .sidebar-nav {
+      padding: 16px 12px;
+      flex: 1;
+    }
+    .nav-section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 8px;
+      margin-bottom: 6px;
+      margin-top: 16px;
+    }
+    .nav-section-label:first-child { margin-top: 0; }
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--muted2);
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-btn:hover { background: var(--card); color: var(--text); }
+    .nav-btn.active {
+      background: linear-gradient(90deg, #1e2a4a, #1e3050);
+      color: #a5b4fc;
+      font-weight: 600;
+    }
+    .nav-btn .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+    .nav-count {
+      margin-left: auto;
+      background: var(--border);
+      color: var(--muted2);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 7px;
+      border-radius: 999px;
+    }
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border2);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ─── Main ─── */
+    .main {
+      margin-left: 220px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Top bar ─── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      background: rgba(11,17,32,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border2);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 50;
+    }
+    .topbar-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      flex: 1;
+    }
+    .search-wrap {
+      position: relative;
+      width: 260px;
+    }
+    .search-icon {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 13px;
+      pointer-events: none;
+    }
+    #searchInput {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+      padding: 8px 12px 8px 32px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #searchInput:focus { border-color: var(--accent); }
+    #searchInput::placeholder { color: var(--muted); }
+
+    /* ─── Page sections ─── */
+    .page-section { display: none; padding: 28px; }
+    .page-section.active { display: block; }
+
+    /* ─── Hero stats ─── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .stat-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+    .stat-accent  { color: var(--accent); }
+    .stat-cyan    { color: var(--accent2); }
+    .stat-green   { color: var(--green); }
+    .stat-yellow  { color: var(--yellow); }
+
+    /* ─── Section heading ─── */
+    .section-heading {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-heading span { color: var(--muted); font-weight: 400; font-size: 12px; }
+
+    /* ─── Report Cards ─── */
+    .reports-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 14px;
+    }
+    .report-card {
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .report-card:hover {
+      border-color: #3b4f7a;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      text-decoration: none;
+    }
+    .report-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .report-date {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .report-weekday {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .report-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: #1e3050;
+      color: #93c5fd;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .report-highlights {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .report-highlights li {
+      font-size: 12.5px;
+      color: #94a3b8;
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.4;
+    }
+    .report-highlights li::before {
+      content: '·';
+      position: absolute;
+      left: 4px;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .report-cats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 2px;
+    }
+    .cat-tag {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.03em;
+    }
+    .cat-LLM       { background: #1e1b4b; color: #a5b4fc; }
+    .cat-VLM       { background: #0c2a40; color: #7dd3fc; }
+    .cat-영상생성   { background: #2d1b4e; color: #d8b4fe; }
+    .cat-이미지생성 { background: #2a1040; color: #e879f9; }
+    .cat-기업발표   { background: #0f2820; color: #6ee7b7; }
+    .cat-연구       { background: #1e1e2e; color: #c4b5fd; }
+    .cat-정책       { background: #1e1a0a; color: #fcd34d; }
+
+    /* ─── Week view ─── */
+    .week-block { margin-bottom: 36px; }
+    .week-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent2);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .week-label .week-range { font-size: 12px; color: var(--muted); font-weight: 400; }
+
+    /* ─── Month view ─── */
+    .month-block { margin-bottom: 44px; }
+    .month-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .month-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .month-count {
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--card);
+      border: 1px solid var(--border2);
+      padding: 3px 11px;
+      border-radius: 999px;
+    }
+    .month-divider {
+      border: none;
+      border-top: 1px solid var(--border2);
+      margin-bottom: 18px;
+    }
+
+    /* ─── Calendar heatmap ─── */
+    .heatmap-wrap {
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+    .heatmap-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted2);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 14px;
+    }
+    .heatmap-grid {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .heatmap-cell {
+      width: 13px;
+      height: 13px;
+      border-radius: 3px;
+      background: var(--card2);
+      border: 1px solid var(--border2);
+      cursor: default;
+      transition: transform 0.1s;
+      position: relative;
+    }
+    .heatmap-cell.has-report {
+      background: var(--accent);
+      border-color: #4f46e5;
+      cursor: pointer;
+    }
+    .heatmap-cell.has-report:hover { transform: scale(1.3); }
+    .heatmap-legend {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ─── Empty state ─── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      .sidebar { width: 60px; }
+      .sidebar-logo h1, .sidebar-logo p,
+      .nav-section-label, .nav-btn span:not(.nav-icon),
+      .nav-count, .sidebar-footer { display: none; }
+      .main { margin-left: 60px; }
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .topbar { padding: 12px 16px; }
+      .page-section { padding: 16px; }
+      .search-wrap { width: 180px; }
+    }
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .reports-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ SIDEBAR ═══════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🤖</div>
+    <h1>AI Daily</h1>
+    <p>Reports Dashboard</p>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">보기</div>
+    <button class="nav-btn active" onclick="showSection('all')" id="nav-all">
+      <span class="nav-icon">📋</span>
+      <span>전체 리포트</span>
+      <span class="nav-count" id="cnt-all">0</span>
+    </button>
+    <button class="nav-btn" onclick="showSection('week')" id="nav-week">
+      <span class="nav-icon">📅</span>
+      <span>주간별</span>
+      <span class="nav-count" id="cnt-week">0</span>
+    </button>
+    <button class="nav-btn" onclick="showSection('month')" id="nav-month">
+      <span class="nav-icon">🗓️</span>
+      <span>월별</span>
+      <span class="nav-count" id="cnt-month">0</span>
+    </button>
+    <button class="nav-btn" onclick="showSection('heatmap')" id="nav-heatmap">
+      <span class="nav-icon">🔥</span>
+      <span>히트맵</span>
+    </button>
+    <div class="nav-section-label">카테고리</div>
+    <button class="nav-btn" onclick="filterCat('')" id="cat-all">
+      <span class="nav-icon">🌐</span>
+      <span>전체</span>
+    </button>
+    <button class="nav-btn" onclick="filterCat('LLM')">
+      <span class="nav-icon">🧠</span>
+      <span>LLM</span>
+    </button>
+    <button class="nav-btn" onclick="filterCat('VLM')">
+      <span class="nav-icon">👁️</span>
+      <span>VLM</span>
+    </button>
+    <button class="nav-btn" onclick="filterCat('영상생성')">
+      <span class="nav-icon">🎬</span>
+      <span>영상생성</span>
+    </button>
+    <button class="nav-btn" onclick="filterCat('기업발표')">
+      <span class="nav-icon">🏢</span>
+      <span>기업발표</span>
+    </button>
+    <button class="nav-btn" onclick="filterCat('연구')">
+      <span class="nav-icon">🔬</span>
+      <span>연구</span>
+    </button>
+    <button class="nav-btn" onclick="filterCat('정책')">
+      <span class="nav-icon">⚖️</span>
+      <span>정책</span>
+    </button>
+  </nav>
+  <div class="sidebar-footer">
+    자동 생성 · 매일 09:00 KST
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════ MAIN ═══════════════════════════════ -->
+<main class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">전체 리포트</div>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="날짜·키워드 검색…" oninput="onSearch(this.value)" />
+    </div>
+  </div>
+
+  <!-- ── Section: All ── -->
+  <section class="page-section active" id="sec-all">
+    <!-- Stats -->
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">총 리포트</div>
+        <div class="stat-value stat-accent" id="stat-total">0</div>
+        <div class="stat-sub">누적 발행 건수</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">이번 주</div>
+        <div class="stat-value stat-cyan" id="stat-week">0</div>
+        <div class="stat-sub">이번 주 발행</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">이번 달</div>
+        <div class="stat-value stat-green" id="stat-month">0</div>
+        <div class="stat-sub">이번 달 발행</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">연속 발행</div>
+        <div class="stat-value stat-yellow" id="stat-streak">0</div>
+        <div class="stat-sub">일 연속 🔥</div>
+      </div>
+    </div>
+
+    <div class="section-heading">
+      최신순 <span id="all-count-label"></span>
+    </div>
+    <div class="reports-grid" id="all-grid"></div>
+    <div class="empty-state" id="all-empty" style="display:none">
+      <div class="empty-icon">🔍</div>
+      <p>검색 결과가 없습니다</p>
+    </div>
+  </section>
+
+  <!-- ── Section: Week ── -->
+  <section class="page-section" id="sec-week">
+    <div class="section-heading">주간별 리포트</div>
+    <div id="week-container"></div>
+  </section>
+
+  <!-- ── Section: Month ── -->
+  <section class="page-section" id="sec-month">
+    <div class="section-heading">월별 리포트</div>
+    <div id="month-container"></div>
+  </section>
+
+  <!-- ── Section: Heatmap ── -->
+  <section class="page-section" id="sec-heatmap">
+    <div class="section-heading">발행 히트맵</div>
+    <div class="heatmap-wrap">
+      <div class="heatmap-title">연간 발행 현황 (최근 52주)</div>
+      <div class="heatmap-grid" id="heatmap-grid"></div>
+      <div class="heatmap-legend">
+        <div class="heatmap-cell"></div> 없음
+        <div style="margin-left:8px"></div>
+        <div class="heatmap-cell has-report"></div> 리포트 있음
+      </div>
+    </div>
+    <div class="section-heading" style="margin-top:28px">월별 발행 통계</div>
+    <div id="monthly-bar-chart"></div>
+  </section>
+
+</main>
+
+<script>
+// ════════════════════════════════════════════════════
+//  Helpers
+// ════════════════════════════════════════════════════
+const WEEKDAYS = ['일','월','화','수','목','금','토'];
+const MONTHS   = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+
+function parseDate(str) { return new Date(str + 'T00:00:00'); }
+
+function weekKey(d) {
+  const t = new Date(d);
+  t.setHours(0,0,0,0);
+  t.setDate(t.getDate() - t.getDay() + 1); // Monday
+  return t.toISOString().slice(0,10);
+}
+
+function formatWeekRange(mondayStr) {
+  const mon = parseDate(mondayStr);
+  const sun = new Date(mon); sun.setDate(sun.getDate() + 6);
+  const fmt = d => `${d.getMonth()+1}/${d.getDate()}`;
+  return `${mon.getFullYear()}년 ${fmt(mon)} ~ ${fmt(sun)}`;
+}
+
+function weekNumber(d) {
+  const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const dayNum = t.getUTCDay() || 7;
+  t.setUTCDate(t.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(t.getUTCFullYear(),0,1));
+  return Math.ceil((((t - yearStart) / 86400000) + 1)/7);
+}
+
+function isSameWeek(a, b) { return weekKey(a) === weekKey(b); }
+
+function getThisWeekStart() {
+  const now = new Date();
+  const mon = new Date(now);
+  mon.setHours(0,0,0,0);
+  mon.setDate(mon.getDate() - (mon.getDay()||7) + 1);
+  return mon.toISOString().slice(0,10);
+}
+
+function getStreak(reports) {
+  if (!reports.length) return 0;
+  const sorted = [...reports].sort((a,b) => b.date.localeCompare(a.date));
+  let streak = 0;
+  let cur = new Date(); cur.setHours(0,0,0,0);
+  for (const r of sorted) {
+    const d = parseDate(r.date);
+    const diff = Math.round((cur - d) / 86400000);
+    if (diff <= 1) { streak++; cur = d; }
+    else break;
+  }
+  return streak;
+}
+
+// ════════════════════════════════════════════════════
+//  Card renderer
+// ════════════════════════════════════════════════════
+function renderCard(r) {
+  const d = parseDate(r.date);
+  const wd = WEEKDAYS[d.getDay()];
+  const highlights = (r.highlights || []).slice(0,3);
+  const cats = (r.categories || []);
+
+  const catsHtml = cats.map(c =>
+    `<span class="cat-tag cat-${CSS.escape(c)}">${c}</span>`
+  ).join('');
+
+  const hlHtml = highlights.map(h =>
+    `<li>${h}</li>`
+  ).join('');
+
+  return `
+    <a class="report-card" href="${r.file}" target="_blank">
+      <div class="report-card-head">
+        <div>
+          <div class="report-date">${r.date}</div>
+          <div class="report-weekday">${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${wd})</div>
+        </div>
+        <span class="report-badge">${r.itemCount || '?'} items</span>
+      </div>
+      <ul class="report-highlights">${hlHtml}</ul>
+      <div class="report-cats">${catsHtml}</div>
+    </a>`;
+}
+
+// ════════════════════════════════════════════════════
+//  State
+// ════════════════════════════════════════════════════
+let allReports   = [];
+let activeFilter = '';
+let searchQuery  = '';
+
+function getFiltered() {
+  return allReports.filter(r => {
+    const matchCat = !activeFilter || (r.categories||[]).includes(activeFilter);
+    const q = searchQuery.toLowerCase();
+    const matchQ = !q ||
+      r.date.includes(q) ||
+      (r.highlights||[]).some(h => h.toLowerCase().includes(q)) ||
+      (r.categories||[]).some(c => c.toLowerCase().includes(q));
+    return matchCat && matchQ;
+  });
+}
+
+// ════════════════════════════════════════════════════
+//  Render All
+// ════════════════════════════════════════════════════
+function renderAll() {
+  const filtered = getFiltered();
+  const grid  = document.getElementById('all-grid');
+  const empty = document.getElementById('all-empty');
+  const label = document.getElementById('all-count-label');
+
+  label.textContent = `${filtered.length}개`;
+  if (!filtered.length) {
+    grid.innerHTML = '';
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+  grid.innerHTML = filtered
+    .sort((a,b) => b.date.localeCompare(a.date))
+    .map(renderCard).join('');
+}
+
+// ════════════════════════════════════════════════════
+//  Render Week
+// ════════════════════════════════════════════════════
+function renderWeek() {
+  const sorted = [...allReports].sort((a,b) => b.date.localeCompare(a.date));
+  const weeks  = {};
+  sorted.forEach(r => {
+    const wk = weekKey(parseDate(r.date));
+    if (!weeks[wk]) weeks[wk] = [];
+    weeks[wk].push(r);
+  });
+
+  const container = document.getElementById('week-container');
+  container.innerHTML = Object.keys(weeks)
+    .sort((a,b) => b.localeCompare(a))
+    .map(wk => {
+      const d    = parseDate(wk);
+      const wNum = weekNumber(d);
+      const cards = weeks[wk].map(renderCard).join('');
+      return `
+        <div class="week-block">
+          <div class="week-label">
+            🗓 ${d.getFullYear()}년 ${wNum}주차
+            <span class="week-range">${formatWeekRange(wk)}</span>
+          </div>
+          <div class="reports-grid">${cards}</div>
+        </div>`;
+    }).join('') || '<div class="empty-state"><div class="empty-icon">📭</div><p>아직 리포트가 없습니다</p></div>';
+
+  // Update count badge
+  document.getElementById('cnt-week').textContent = Object.keys(weeks).length;
+}
+
+// ════════════════════════════════════════════════════
+//  Render Month
+// ════════════════════════════════════════════════════
+function renderMonth() {
+  const sorted = [...allReports].sort((a,b) => b.date.localeCompare(a.date));
+  const months = {};
+  sorted.forEach(r => {
+    const key = r.date.slice(0,7); // YYYY-MM
+    if (!months[key]) months[key] = [];
+    months[key].push(r);
+  });
+
+  const container = document.getElementById('month-container');
+  container.innerHTML = Object.keys(months)
+    .sort((a,b) => b.localeCompare(a))
+    .map(key => {
+      const [y,m] = key.split('-');
+      const cards = months[key].map(renderCard).join('');
+      return `
+        <div class="month-block">
+          <div class="month-header">
+            <div class="month-title">${y}년 ${parseInt(m)}월</div>
+            <span class="month-count">${months[key].length}개 리포트</span>
+          </div>
+          <hr class="month-divider" />
+          <div class="reports-grid">${cards}</div>
+        </div>`;
+    }).join('') || '<div class="empty-state"><div class="empty-icon">📭</div><p>아직 리포트가 없습니다</p></div>';
+
+  document.getElementById('cnt-month').textContent = Object.keys(months).length;
+}
+
+// ════════════════════════════════════════════════════
+//  Render Heatmap
+// ════════════════════════════════════════════════════
+function renderHeatmap() {
+  const dateSet = new Set(allReports.map(r => r.date));
+  const grid = document.getElementById('heatmap-grid');
+
+  // 52 weeks back from today
+  const today = new Date(); today.setHours(0,0,0,0);
+  const start = new Date(today);
+  start.setDate(start.getDate() - 364);
+  // Align to Monday
+  start.setDate(start.getDate() - (start.getDay()||7) + 1);
+
+  let cells = '';
+  const cur = new Date(start);
+  while (cur <= today) {
+    const iso = cur.toISOString().slice(0,10);
+    const has = dateSet.has(iso);
+    cells += `<div class="heatmap-cell${has ? ' has-report' : ''}"
+               title="${iso}${has ? ' ✓' : ''}"
+               ${has ? `onclick="goToDate('${iso}')"` : ''}></div>`;
+    cur.setDate(cur.getDate() + 1);
+  }
+  grid.innerHTML = cells;
+
+  // Monthly bar chart
+  const months = {};
+  allReports.forEach(r => {
+    const key = r.date.slice(0,7);
+    months[key] = (months[key]||0) + 1;
+  });
+  const maxVal = Math.max(...Object.values(months), 1);
+  const bar = document.getElementById('monthly-bar-chart');
+  bar.innerHTML = Object.keys(months).sort().map(k => {
+    const [y,m] = k.split('-');
+    const v = months[k];
+    const pct = Math.round((v / maxVal) * 100);
+    return `
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="width:80px;font-size:12px;color:var(--muted2);text-align:right">${y}.${m}</div>
+        <div style="flex:1;background:var(--card);border-radius:4px;height:22px;overflow:hidden">
+          <div style="width:${pct}%;background:var(--accent);height:100%;border-radius:4px;
+                      display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:700;color:#fff;
+                      transition:width 0.5s">${v}개</div>
+        </div>
+      </div>`;
+  }).join('') || '<div style="color:var(--muted);font-size:13px">데이터 없음</div>';
+}
+
+function goToDate(iso) {
+  filterCat('');
+  showSection('all');
+  searchQuery = iso;
+  document.getElementById('searchInput').value = iso;
+  renderAll();
+}
+
+// ════════════════════════════════════════════════════
+//  Stats
+// ════════════════════════════════════════════════════
+function renderStats() {
+  const total  = allReports.length;
+  const wkStart = getThisWeekStart();
+  const thisWeek  = allReports.filter(r => r.date >= wkStart).length;
+  const thisMonth = allReports.filter(r => r.date.startsWith(new Date().toISOString().slice(0,7))).length;
+  const streak    = getStreak(allReports);
+
+  document.getElementById('stat-total').textContent  = total;
+  document.getElementById('stat-week').textContent   = thisWeek;
+  document.getElementById('stat-month').textContent  = thisMonth;
+  document.getElementById('stat-streak').textContent = streak;
+  document.getElementById('cnt-all').textContent     = total;
+}
+
+// ════════════════════════════════════════════════════
+//  Navigation
+// ════════════════════════════════════════════════════
+const SECTIONS = { all:'전체 리포트', week:'주간별', month:'월별', heatmap:'히트맵' };
+
+function showSection(id) {
+  Object.keys(SECTIONS).forEach(k => {
+    document.getElementById('sec-' + k).classList.toggle('active', k === id);
+    document.getElementById('nav-' + k)?.classList.toggle('active', k === id);
+  });
+  document.getElementById('topbar-title').textContent = SECTIONS[id];
+  window.scrollTo(0,0);
+}
+
+function filterCat(cat) {
+  activeFilter = cat;
+  document.getElementById('searchInput').value = '';
+  searchQuery = '';
+  showSection('all');
+  renderAll();
+}
+
+function onSearch(val) {
+  searchQuery = val;
+  renderAll();
+}
+
+// ════════════════════════════════════════════════════
+//  Init
+// ════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  allReports = (window.AI_REPORTS || []).sort((a,b) => b.date.localeCompare(a.date));
+
+  renderStats();
+  renderAll();
+  renderWeek();
+  renderMonth();
+  renderHeatmap();
+});
+</script>
+</body>
+</html>
