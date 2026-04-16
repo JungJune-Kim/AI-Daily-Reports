@@ -81,6 +81,34 @@
     .footer .sources{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
     @media(max-width:600px){.header h1{font-size:1.5rem}.container{padding:20px 14px}.cards-grid{grid-template-columns:1fr}}
   </style>
+  <script src="reports-list.js"></script>
+  <style>
+    /* ── Font size overrides (+2px) ── */
+    body{font-size:16px}
+    .date-chip{font-size:13px}
+    .header h1{font-size:2.25rem}
+    .header p{font-size:15px}
+    .ko-summary h2{font-size:13px}
+    .ko-summary li{font-size:15.5px}
+    .section-count{font-size:13px}
+    .section-header h2{font-size:1.175rem}
+    .tag{font-size:12px}
+    .card-title{font-size:17px}
+    .card-desc{font-size:15px}
+    .card-impact{font-size:14px}
+    .source-link{font-size:13px}
+    .thumb-placeholder span{font-size:13px}
+    .footer{font-size:14px}
+    @media(max-width:600px){.header h1{font-size:1.625rem}}
+    /* ── Report navigation ── */
+    .nav-bar{background:var(--surface);border-bottom:1px solid var(--border)}
+    .nav-inner{max-width:1000px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .nav-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--accent);padding:7px 16px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);transition:background .15s,border-color .15s;white-space:nowrap}
+    .nav-btn:hover{background:#eef2ff;border-color:#a5b4fc;text-decoration:none}
+    .nav-btn.disabled{color:var(--muted2);cursor:default;pointer-events:none}
+    .nav-current{font-size:13px;font-weight:700;color:var(--text);text-align:center}
+    .nav-current small{display:block;font-size:11px;font-weight:400;color:var(--muted2);margin-top:2px}
+  </style>
 </head>
 <body>
 
@@ -88,6 +116,14 @@
   <div class="date-chip">2026 · 04 · 15 · Wednesday</div>
   <h1>AI Daily Trends Report</h1>
   <p>LLM &nbsp;·&nbsp; VLM &nbsp;·&nbsp; Image / Video Gen &nbsp;·&nbsp; Company News &nbsp;·&nbsp; Research &nbsp;·&nbsp; Policy</p>
+</div>
+
+<div class="nav-bar">
+  <div class="nav-inner" id="report-nav">
+    <span class="nav-btn disabled">← 이전 리포트</span>
+    <span class="nav-current">로딩 중…</span>
+    <span class="nav-btn disabled">다음 리포트 →</span>
+  </div>
 </div>
 
 <div class="container">
@@ -124,7 +160,7 @@
           <div class="card-impact">
             <span class="impact-label">Impact</span>
             <span class="impact-text">유럽 기업과 개발자에게 비용 효율적 중간급 모델 선택지 추가. 오픈소스 생태계 다양화.</span>
-            <a class="source-link" href="https://fazm.ai/blog/new-llm-releases-april-2026" target="_blank">Source ↗</a>
+            <a class="source-link" href="https://fazm.ai/blog/new-llm-releases-april-2026" target="_blank">자세히 보기</a>
           </div>
         </div>
       </div>
@@ -140,7 +176,7 @@
           <div class="card-impact">
             <span class="impact-label">Impact</span>
             <span class="impact-text">모델 선택 비용 감소. 하지만 개발자의 모델 선택 복잡성 급증.</span>
-            <a class="source-link" href="https://aiflashreport.com/model-releases.html" target="_blank">Source ↗</a>
+            <a class="source-link" href="https://aiflashreport.com/model-releases.html" target="_blank">자세히 보기</a>
           </div>
         </div>
       </div>
@@ -157,7 +193,7 @@
           <div class="card-impact">
             <span class="impact-label">Impact</span>
             <span class="impact-text">AI 에이전트의 실세계 컴퓨터 작업 자동화 가능성 크게 확장.</span>
-            <a class="source-link" href="https://llm-stats.com/llm-updates" target="_blank">Source ↗</a>
+            <a class="source-link" href="https://llm-stats.com/llm-updates" target="_blank">자세히 보기</a>
           </div>
         </div>
       </div>
@@ -185,7 +221,7 @@
           <div class="card-impact">
             <span class="impact-label">Impact</span>
             <span class="impact-text">온디바이스 멀티모달 AI의 민주화. 프라이버시 중시 엣지 배포에 최적.</span>
-            <a class="source-link" href="https://llm-stats.com/ai-news" target="_blank">Source ↗</a>
+            <a class="source-link" href="https://llm-stats.com/ai-news" target="_blank">자세히 보기</a>
           </div>
         </div>
       </div>
@@ -201,7 +237,7 @@
           <div class="card-impact">
             <span class="impact-label">Impact</span>
             <span class="impact-text">로봇 및 체화 AI 분야에서 중국 빅테크의 연구 역량 강화 확인.</span>
-            <a class="source-link" href="https://www.devflokers.com/blog/new-ai-papers-arxiv-last-24-hours-april-2026" target="_blank">Source ↗</a>
+            <a class="source-link" href="https://www.devflokers.com/blog/new-ai-papers-arxiv-last-24-hours-april-2026" target="_blank">자세히 보기</a>
           </div>
         </div>
       </div>
@@ -229,7 +265,7 @@
           <div class="card-impact">
             <span class="impact-label">Impact</span>
             <span class="impact-text">별도 더빙·립싱크 파이프라인이 불필요해져 영상 제작 비용 구조 혁신 예상.</span>
-            <a class="source-link" href="https://www.openpr.com/news/4471247/happyhorse-1-0-introduces-the-truth-behind-the-1-open-source-ai" target="_blank">Source ↗</a>
+            <a class="source-link" href="https://www.openpr.com/news/4471247/happyhorse-1-0-introduces-the-truth-behind-the-1-open-source-ai" target="_blank">자세히 보기</a>
           </div>
         </div>
       </div>
@@ -245,7 +281,7 @@
           <div class="card-impact">
             <span class="impact-label">Impact</span>
             <span class="impact-text">SME의 영상 콘텐츠 생산 비용 절감. 전통 영상 제작 업계 구조 재편 가속.</span>
-            <a class="source-link" href="https://autogpt.net/state-of-ai-video/" target="_blank">Source ↗</a>
+            <a class="source-link" href="https://autogpt.net/state-of-ai-video/" target="_blank">자세히 보기</a>
           </div>
         </div>
       </div>
@@ -274,7 +310,7 @@
           <div class="card-impact">
             <span class="impact-label">Impact</span>
             <span class="impact-text">AI 지식재산 보호 논의 본격화. 경쟁사 간 이례적 협력이 업계 표준화로 이어질 수 있음.</span>
-            <a class="source-link" href="https://www.roborhythms.com/openai-anthropic-google-fight-chinese-ai-copying-2026/" target="_blank">Source ↗</a>
+            <a class="source-link" href="https://www.roborhythms.com/openai-anthropic-google-fight-chinese-ai-copying-2026/" target="_blank">자세히 보기</a>
           </div>
         </div>
       </div>
@@ -291,7 +327,7 @@
           <div class="card-impact">
             <span class="impact-label">Impact</span>
             <span class="impact-text">Nvidia 의존도 감소 가능성. 칩 수급 불안정에 대한 AI 기업들의 자구책 확산.</span>
-            <a class="source-link" href="https://www.resultsense.com/news/2026-04-10-anthropic-explores-designing-own-ai-chips" target="_blank">Source ↗</a>
+            <a class="source-link" href="https://www.resultsense.com/news/2026-04-10-anthropic-explores-designing-own-ai-chips" target="_blank">자세히 보기</a>
           </div>
         </div>
       </div>
@@ -307,7 +343,7 @@
           <div class="card-impact">
             <span class="impact-label">Impact</span>
             <span class="impact-text">유스케이스별 모델 선택이 중요해짐. 모델 라우팅·오케스트레이션 솔루션 수요 증가.</span>
-            <a class="source-link" href="https://clearainews.com/ai-business-startups/openai-anthropic-google-ai-race/" target="_blank">Source ↗</a>
+            <a class="source-link" href="https://clearainews.com/ai-business-startups/openai-anthropic-google-ai-race/" target="_blank">자세히 보기</a>
           </div>
         </div>
       </div>
@@ -336,7 +372,7 @@
           <div class="card-impact">
             <span class="impact-label">Impact</span>
             <span class="impact-text">학술 심사 시스템의 신뢰성 재검토 필요. AI 작성 논문 탐지 도구 수요 급증 예상.</span>
-            <a class="source-link" href="https://phys.org/news/2026-03-ai-paper-peer.html" target="_blank">Source ↗</a>
+            <a class="source-link" href="https://phys.org/news/2026-03-ai-paper-peer.html" target="_blank">자세히 보기</a>
           </div>
         </div>
       </div>
@@ -352,7 +388,7 @@
           <div class="card-impact">
             <span class="impact-label">Impact</span>
             <span class="impact-text">범용 로봇의 실용화 가능성 한 단계 상승. 휴머노이드 로봇 상용화 일정 앞당겨질 수 있음.</span>
-            <a class="source-link" href="https://www.nextbigfuture.com/2026/04/2026-is-breakthrough-year-for-reliable-ai-world-models-and-continual-learning-prototypes.html" target="_blank">Source ↗</a>
+            <a class="source-link" href="https://www.nextbigfuture.com/2026/04/2026-is-breakthrough-year-for-reliable-ai-world-models-and-continual-learning-prototypes.html" target="_blank">자세히 보기</a>
           </div>
         </div>
       </div>
@@ -369,7 +405,7 @@
           <div class="card-impact">
             <span class="impact-label">Impact</span>
             <span class="impact-text">기술 트렌드 방향성 제시. 연구·투자 우선순위 결정에 영향 예상.</span>
-            <a class="source-link" href="https://www.technologyreview.com/2026/04/14/1135298/coming-soon-10-things-that-matter-in-ai-right-now/" target="_blank">Source ↗</a>
+            <a class="source-link" href="https://www.technologyreview.com/2026/04/14/1135298/coming-soon-10-things-that-matter-in-ai-right-now/" target="_blank">자세히 보기</a>
           </div>
         </div>
       </div>
@@ -398,7 +434,7 @@
           <div class="card-impact">
             <span class="impact-label">Impact</span>
             <span class="impact-text">14억 인구 시장에서 AI 서비스를 운영하는 글로벌 기업에 새로운 컴플라이언스 기준 제시.</span>
-            <a class="source-link" href="https://www.aiandnews.com/blog/latest-ai-news-public-concerns/" target="_blank">Source ↗</a>
+            <a class="source-link" href="https://www.aiandnews.com/blog/latest-ai-news-public-concerns/" target="_blank">자세히 보기</a>
           </div>
         </div>
       </div>
@@ -414,7 +450,7 @@
           <div class="card-impact">
             <span class="impact-label">Impact</span>
             <span class="impact-text">유럽 스타트업의 AI 법 진입 장벽 완화. 혁신 생태계 보전과 규제 준수 균형 모색.</span>
-            <a class="source-link" href="https://www.onetrust.com/blog/where-ai-regulation-is-heading-in-2026-a-global-outlook/" target="_blank">Source ↗</a>
+            <a class="source-link" href="https://www.onetrust.com/blog/where-ai-regulation-is-heading-in-2026-a-global-outlook/" target="_blank">자세히 보기</a>
           </div>
         </div>
       </div>
@@ -430,7 +466,7 @@
           <div class="card-impact">
             <span class="impact-label">Impact</span>
             <span class="impact-text">미국 AI 규제 연방 vs. 주 갈등 심화. 기업의 법적 불확실성 증가, 로비 비용 상승.</span>
-            <a class="source-link" href="https://www.nadcab.com/blog/ai-regulation-news" target="_blank">Source ↗</a>
+            <a class="source-link" href="https://www.nadcab.com/blog/ai-regulation-news" target="_blank">자세히 보기</a>
           </div>
         </div>
       </div>
@@ -457,5 +493,25 @@
   </div>
 </div>
 
+<script>
+(function(){
+  var reports=window.AI_REPORTS;
+  if(!reports||!reports.length)return;
+  var file=decodeURIComponent(location.pathname.split('/').pop()||'');
+  var idx=reports.findIndex(function(r){return r.file===file;});
+  if(idx===-1)return;
+  var older=idx+1<reports.length?reports[idx+1]:null;
+  var newer=idx-1>=0?reports[idx-1]:null;
+  function fmt(d){var p=d.split('-');return p[0]+'년 '+parseInt(p[1])+'월 '+parseInt(p[2])+'일';}
+  function dow(d){return['일','월','화','수','목','금','토'][new Date(d+'T12:00:00').getDay()]+'요일';}
+  var nav=document.getElementById('report-nav');
+  if(!nav)return;
+  var h='';
+  h+=older?'<a class="nav-btn" href="'+older.file+'">← '+fmt(older.date)+'</a>':'<span class="nav-btn disabled">← 이전 리포트</span>';
+  h+='<span class="nav-current">'+fmt(reports[idx].date)+'<small>'+dow(reports[idx].date)+'</small></span>';
+  h+=newer?'<a class="nav-btn" href="'+newer.file+'">'+fmt(newer.date)+' →</a>':'<span class="nav-btn disabled">다음 리포트 →</span>';
+  nav.innerHTML=h;
+})();
+</script>
 </body>
 </html>
