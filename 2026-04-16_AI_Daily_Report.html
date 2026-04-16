@@ -1,411 +1,493 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Daily Report — 2026-04-16</title>
-<style>
-:root {
-  --bg: #f1f5f9;
-  --surface: #ffffff;
-  --surface2: #f8fafc;
-  --border: #e2e8f0;
-  --text: #0f172a;
-  --muted: #475569;
-  --muted2: #94a3b8;
-  --accent: #6366f1;
-  --cyan: #0891b2;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
-a{color:inherit;text-decoration:none}
-a:hover{text-decoration:underline}
-
-/* Header */
-.header{background:var(--surface);border-bottom:1px solid var(--border);padding:24px 32px;position:sticky;top:0;z-index:100}
-.header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.header h1{font-size:1.6rem;font-weight:800;background:linear-gradient(90deg,#4f46e5,#6366f1,#0891b2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.header-meta{font-size:.85rem;color:var(--muted2)}
-
-/* Main */
-.main{max-width:1200px;margin:0 auto;padding:32px 24px}
-
-/* Section */
-.section{margin-bottom:48px}
-.section-title{font-size:1.15rem;font-weight:700;color:var(--text);margin-bottom:20px;display:flex;align-items:center;gap:8px}
-.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
-
-/* Grid */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
-
-/* Card */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:border-color .2s,box-shadow .2s;display:flex;flex-direction:column}
-.card:hover{border-color:#a5b4fc;box-shadow:0 10px 28px rgba(99,102,241,.12)}
-.card.featured{grid-column:1 / -1;flex-direction:row}
-.card.featured .thumb{width:360px;flex-shrink:0;height:auto;min-height:240px}
-.card.featured .card-body{padding:28px 32px;display:flex;flex-direction:column;justify-content:center}
-.thumb{height:180px;overflow:hidden;background:var(--surface2)}
-.thumb img{width:100%;height:100%;object-fit:cover}
-
-/* Placeholder gradients */
-.ph-llm{background:linear-gradient(135deg,#eef2ff,#e0e7ff);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
-.ph-vlm{background:linear-gradient(135deg,#eff6ff,#dbeafe);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
-.ph-video{background:linear-gradient(135deg,#faf5ff,#ede9fe);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
-.ph-company{background:linear-gradient(135deg,#f0fdf4,#dcfce7);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
-.ph-research{background:linear-gradient(135deg,#f5f3ff,#ede9fe);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
-.ph-policy{background:linear-gradient(135deg,#fefce8,#fef9c3);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
-
-/* Card body */
-.card-body{padding:18px 20px;flex:1;display:flex;flex-direction:column;gap:8px}
-.card-body h3{font-size:.95rem;font-weight:700;line-height:1.45;color:var(--text)}
-.card-body p{font-size:.85rem;color:var(--muted);line-height:1.6;flex:1}
-.card-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-.tags{display:flex;gap:6px;flex-wrap:wrap}
-.tag{font-size:.72rem;font-weight:600;padding:3px 8px;border-radius:99px}
-.tag-llm{background:#eef2ff;color:#4338ca}
-.tag-vlm{background:#eff6ff;color:#1d4ed8}
-.tag-image{background:#fdf4ff;color:#7e22ce}
-.tag-video{background:#faf5ff;color:#6d28d9}
-.tag-openai{background:#f0fdf4;color:#15803d}
-.tag-anthropic{background:#fff7ed;color:#c2410c}
-.tag-google{background:#eff6ff;color:#1d4ed8}
-.tag-meta{background:#eff6ff;color:#1e40af}
-.tag-research{background:#f5f3ff;color:#5b21b6}
-.tag-policy{background:#fefce8;color:#a16207}
-.tag-oss{background:#f0fdf4;color:#166534}
-.tag-mistral{background:#fff1f2;color:#be123c}
-.tag-microsoft{background:#eff6ff;color:#1e40af}
-.tag-alibaba{background:#fff7ed;color:#b45309}
-.card-link{font-size:.78rem;color:var(--accent);font-weight:600;white-space:nowrap}
-.card-link:hover{text-decoration:underline}
-
-/* Summary bar */
-.summary-bar{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 28px;margin-bottom:36px;display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap}
-.summary-bar h2{font-size:.9rem;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
-.summary-bar ul{display:flex;flex-direction:column;gap:6px;list-style:none}
-.summary-bar li{font-size:.88rem;color:var(--text);padding-left:16px;position:relative}
-.summary-bar li::before{content:'▸';position:absolute;left:0;color:var(--accent)}
-
-@media(max-width:720px){
-  .card.featured{flex-direction:column}
-  .card.featured .thumb{width:100%;min-height:200px}
-  .summary-bar{flex-direction:column}
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Daily Report — 2026-04-16</title>
+  <style>
+    :root {
+      --bg:#f1f5f9; --surface:#ffffff; --surface2:#f8fafc;
+      --border:#e2e8f0; --text:#0f172a; --muted:#475569;
+      --muted2:#94a3b8; --accent:#6366f1; --cyan:#0891b2;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;font-size:14px;line-height:1.65}
+    a{color:var(--cyan);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .header{background:#ffffff;border-bottom:1px solid var(--border);padding:44px 24px 36px;text-align:center}
+    .date-chip{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 14px;border-radius:999px;margin-bottom:18px}
+    .header h1{font-size:2.1rem;font-weight:800;letter-spacing:-.025em;background:linear-gradient(90deg,#4f46e5 0%,#6366f1 50%,#0891b2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .header p{color:var(--muted2);margin-top:8px;font-size:13px}
+    .container{max-width:1000px;margin:0 auto;padding:36px 24px}
+    .ko-summary{background:#ffffff;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:14px;padding:24px 28px;margin-bottom:40px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+    .ko-summary h2{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.09em;margin-bottom:16px}
+    .ko-summary ul{list-style:none}
+    .ko-summary li{padding:8px 0 8px 20px;position:relative;color:var(--muted);font-size:13.5px;border-bottom:1px solid var(--border)}
+    .ko-summary li:last-child{border-bottom:none}
+    .ko-summary li::before{content:'▶';position:absolute;left:0;top:12px;color:var(--accent);font-size:9px}
+    .ko-summary li strong{color:var(--text)}
+    .section{margin-bottom:52px}
+    .section-header{display:flex;align-items:center;gap:12px;padding-bottom:14px;margin-bottom:22px;border-bottom:1px solid var(--border)}
+    .section-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+    .section-header h2{font-size:1.05rem;font-weight:700;color:var(--text)}
+    .section-count{margin-left:auto;font-size:11px;color:var(--muted2);background:var(--surface2);border:1px solid var(--border);padding:2px 10px;border-radius:999px}
+    .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
+    .cards-grid .card:first-child{grid-column:1/-1}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:border-color .15s,transform .15s,box-shadow .15s}
+    .card:hover{border-color:#a5b4fc;transform:translateY(-3px);box-shadow:0 10px 28px rgba(99,102,241,.12)}
+    .card-thumb{width:100%;height:180px;overflow:hidden;background:var(--surface2);flex-shrink:0}
+    .card:first-child .card-thumb{height:240px}
+    .card-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+    .card:hover .card-thumb img{transform:scale(1.04)}
+    .thumb-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:36px}
+    .thumb-placeholder span{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;opacity:.5}
+    .ph-llm{background:linear-gradient(135deg,#eef2ff,#e0e7ff)}
+    .ph-vlm{background:linear-gradient(135deg,#e0f2fe,#bae6fd)}
+    .ph-video{background:linear-gradient(135deg,#faf5ff,#ede9fe)}
+    .ph-company{background:linear-gradient(135deg,#f0fdf4,#dcfce7)}
+    .ph-research{background:linear-gradient(135deg,#fdf4ff,#f3e8ff)}
+    .ph-policy{background:linear-gradient(135deg,#fefce8,#fef9c3)}
+    .card-body{padding:16px 18px 18px;display:flex;flex-direction:column;flex:1;gap:10px}
+    .card-meta{display:flex;flex-wrap:wrap;gap:6px}
+    .tag{display:inline-flex;align-items:center;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 9px;border-radius:999px}
+    .tag-llm{background:#eef2ff;color:#4338ca}
+    .tag-vlm{background:#e0f2fe;color:#0369a1}
+    .tag-image{background:#faf5ff;color:#7c3aed}
+    .tag-video{background:#fdf4ff;color:#a21caf}
+    .tag-openai{background:#f0fdf4;color:#15803d}
+    .tag-anthropic{background:#fff7ed;color:#c2410c}
+    .tag-google{background:#eff6ff;color:#1d4ed8}
+    .tag-meta{background:#eff6ff;color:#1e40af}
+    .tag-research{background:#fdf4ff;color:#7e22ce}
+    .tag-policy{background:#fefce8;color:#a16207}
+    .tag-oss{background:#f0fdf4;color:#166534}
+    .tag-mistral{background:#fdf4ff;color:#a21caf}
+    .tag-microsoft{background:#eff6ff;color:#1e40af}
+    .tag-alibaba{background:#fff7ed;color:#b45309}
+    .card-title{font-size:15px;font-weight:700;color:var(--text);line-height:1.4}
+    .card-desc{color:var(--muted);font-size:13px;line-height:1.65;flex:1}
+    .card-desc strong{color:var(--text)}
+    .card-impact{display:flex;align-items:flex-start;gap:8px;padding-top:10px;border-top:1px solid var(--border);font-size:12px}
+    .impact-label{color:var(--muted2);font-weight:700;flex-shrink:0}
+    .impact-text{color:var(--muted2);line-height:1.4}
+    .source-link{margin-left:auto;flex-shrink:0;font-size:11px;color:var(--cyan)}
+    .sec-llm .section-icon{background:#eef2ff}
+    .sec-vlm .section-icon{background:#e0f2fe}
+    .sec-video .section-icon{background:#fdf4ff}
+    .sec-company .section-icon{background:#f0fdf4}
+    .sec-research .section-icon{background:#faf5ff}
+    .sec-policy .section-icon{background:#fefce8}
+    .footer{text-align:center;padding:28px 24px;border-top:1px solid var(--border);color:var(--muted2);font-size:12px;background:var(--surface)}
+    .footer .gen-time{margin-top:4px;color:var(--muted2)}
+    .footer .sources{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+    @media(max-width:600px){.header h1{font-size:1.5rem}.container{padding:20px 14px}.cards-grid{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
 
-<header class="header">
-  <div class="header-inner">
-    <h1>AI Daily Report</h1>
-    <span class="header-meta">2026년 4월 16일 (목) · 총 18개 항목</span>
-  </div>
-</header>
+<div class="header">
+  <div class="date-chip">2026 · 04 · 16 · Thursday</div>
+  <h1>AI Daily Trends Report</h1>
+  <p>LLM &nbsp;·&nbsp; VLM &nbsp;·&nbsp; Image / Video Gen &nbsp;·&nbsp; Company News &nbsp;·&nbsp; Research &nbsp;·&nbsp; Policy</p>
+</div>
 
-<main class="main">
+<div class="container">
 
-  <!-- 오늘의 하이라이트 -->
-  <div class="summary-bar">
-    <h2>오늘의<br>핵심</h2>
+  <div class="ko-summary">
+    <h2>🇰🇷 오늘의 핵심 AI 뉴스</h2>
     <ul>
-      <li>Anthropic 연매출 $300억 돌파, OpenAI 추월 — 기업 AI 시장 판도 변화</li>
-      <li>Microsoft MAI 3종 모델 공개 — 음성·이미지·전사 전 영역 경쟁자 도전</li>
-      <li>Meta Muse Spark 출시, 2026년 AI 설비투자 최대 $1,350억 예고</li>
-      <li>LG EXAONE 4.5 — STEM 벤치마크에서 GPT-5-mini·Claude 4.5 Sonnet 제쳐</li>
-      <li>백악관 국가 AI 정책 프레임워크 — 주(州) AI 규제 연방 선점 권고</li>
+      <li>Anthropic <strong>연환산 매출 $300억 돌파</strong> — 처음으로 OpenAI($250억) 추월, 기업 고객 1,000곳 이상이 연간 $100만 이상 지출</li>
+      <li>Microsoft <strong>MAI 3종 모델</strong> 공개 — 음성 전사·음성 합성·이미지 생성 전 영역, Amazon·Google보다 저렴한 가격으로 기업 클라우드 공략</li>
+      <li>Meta <strong>Muse Spark</strong> 출시, 2026년 AI 설비투자 최대 <strong>$1,350억</strong> 예고 — 전년 대비 약 2배 규모</li>
+      <li>LG AI Research <strong>EXAONE 4.5</strong> — STEM 5개 벤치마크 평균 77.3점, GPT-5-mini(73.5)·Claude 4.5 Sonnet(74.6) 능가</li>
+      <li>백악관 <strong>국가 AI 정책 프레임워크</strong> 입법 권고 — 주(州) AI 규제를 연방이 선점, 신규 AI 규제 기관 신설 반대</li>
     </ul>
   </div>
 
-  <!-- ══════════════════════════════ LLM ══════════════════════════════ -->
-  <section class="section">
-    <h2 class="section-title">🧠 LLM 업데이트</h2>
-    <div class="grid">
+  <!-- ── LLM ── -->
+  <div class="section sec-llm">
+    <div class="section-header">
+      <div class="section-icon">🧠</div>
+      <h2>LLM 업데이트</h2>
+      <span class="section-count">3 items</span>
+    </div>
+    <div class="cards-grid">
 
-      <!-- featured -->
-      <article class="card featured">
-        <div class="thumb ph-llm" style="min-height:240px">🤖</div>
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-llm">🤖<span>April LLM Wave</span></div>
+        </div>
         <div class="card-body">
-          <h3>4월 LLM 대격변 — GPT-5 Turbo·Claude Sonnet 4.6·Llama 4·Qwen 3·Gemini 2.5 동시 출격</h3>
-          <p>AI 역사상 가장 바쁜 4월이 펼쳐지고 있다. 두 주 사이에 6개 이상의 주요 조직이 프로덕션급 모델을 선보였다. OpenAI는 GPT-5 Turbo, Anthropic은 Claude Sonnet 4.6, Meta는 Llama 4, 알리바바는 Qwen 3, Google은 Gemini 2.5를 릴리스했다. Mistral은 4월 9일 오픈 웨이트 Medium 3를 공개하며 소형-대형 모델 사이의 공백을 노렸고, Arcee의 Trinity(4,000억 파라미터)는 Apache 2.0 라이선스로 기업 내재화 수요를 겨냥했다.</p>
-          <div class="tags">
-            <span class="tag tag-llm">LLM</span>
-            <span class="tag tag-openai">OpenAI</span>
-            <span class="tag tag-anthropic">Anthropic</span>
-            <span class="tag tag-mistral">Mistral</span>
-            <span class="tag tag-oss">오픈소스</span>
+          <div class="card-meta"><span class="tag tag-llm">LLM</span><span class="tag tag-openai">OpenAI</span><span class="tag tag-anthropic">Anthropic</span><span class="tag tag-mistral">Mistral</span><span class="tag tag-oss">Open Source</span></div>
+          <div class="card-title">4월 LLM 대격변 — GPT-5 Turbo·Claude Sonnet 4.6·Llama 4·Qwen 3·Gemini 2.5 동시 출격</div>
+          <div class="card-desc">AI 역사상 가장 바쁜 4월이 펼쳐지고 있다. 두 주 사이에 6개 이상의 주요 조직이 프로덕션급 모델을 선보였다. Mistral은 4월 9일 <strong>오픈 웨이트 Medium 3</strong>를 공개하며 소형-대형 모델 사이 공백을 노렸고, Arcee의 <strong>Trinity</strong>(4,000억 파라미터, Apache 2.0)는 기업 내재화 수요를 겨냥했다. 독점·오픈소스 모델 간 격차는 역대 최소 수준.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">모델 선택 비용 감소. 하지만 개발자의 모델 선택 복잡성 급증.</span>
+            <a class="source-link" href="https://fazm.ai/blog/latest-llm-releases-april-2026" target="_blank">Source ↗</a>
           </div>
         </div>
-      </article>
+      </div>
 
-      <article class="card">
-        <div class="thumb ph-llm">⚡</div>
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-llm">⚡<span>OpenAI</span></div>
+        </div>
         <div class="card-body">
-          <h3>OpenAI Responses API 확장 — 쉘 도구·에이전트 루프·컨텍스트 압축 지원</h3>
-          <p>OpenAI가 Responses API를 업데이트해 에이전틱 워크플로우 구축을 대폭 간소화했다. 내장 쉘 도구, 호스티드 컨테이너 워크스페이스, 재사용 가능한 에이전트 스킬, 컨텍스트 압축 기능이 추가됐다. 에이전트 실행 루프가 API 내부에 내재화돼 개발자가 별도 오케스트레이션 레이어를 구축할 필요가 줄었다.</p>
-          <div class="tags"><span class="tag tag-openai">OpenAI</span><span class="tag tag-llm">LLM</span></div>
+          <div class="card-meta"><span class="tag tag-openai">OpenAI</span><span class="tag tag-llm">LLM</span></div>
+          <div class="card-title">OpenAI Responses API 확장 — 쉘 도구·에이전트 루프·컨텍스트 압축 지원</div>
+          <div class="card-desc">OpenAI가 Responses API를 업데이트해 에이전틱 워크플로우 구축을 대폭 간소화했다. <strong>내장 쉘 도구, 호스티드 컨테이너 워크스페이스, 재사용 가능한 에이전트 스킬, 컨텍스트 압축</strong> 기능이 추가됐다. 에이전트 실행 루프가 API 내부에 내재화돼 개발자가 별도 오케스트레이션 레이어를 구축할 필요가 줄었다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">에이전트 앱 개발 진입 장벽 하락. 코딩 에이전트·자동화 워크플로우 시장 확대 가속.</span>
+            <a class="source-link" href="https://llm-stats.com/ai-news" target="_blank">Source ↗</a>
+          </div>
         </div>
-        <div class="card-footer">
-          <span></span>
-          <a class="card-link" href="https://llm-stats.com/ai-news" target="_blank">자세히 →</a>
-        </div>
-      </article>
+      </div>
 
-      <article class="card">
-        <div class="thumb ph-llm">🤝</div>
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-llm">🔧<span>Stripe</span></div>
+        </div>
         <div class="card-body">
-          <h3>Stripe Minions — 자율 코딩 에이전트, 주당 PR 1,300건 생성</h3>
-          <p>Stripe 엔지니어링팀이 Minions 에이전트 시스템을 공개했다. Slack 메시지·버그 리포트·기능 요청을 입력받아 주당 1,300건 이상의 프로덕션 레디 PR을 자동 생성한다. 인간 리뷰를 유지하면서도 신뢰성을 확보했다는 점에서 산업용 코딩 에이전트의 새 기준으로 주목받고 있다.</p>
-          <div class="tags"><span class="tag tag-llm">LLM</span><span class="tag tag-research">에이전트</span></div>
+          <div class="card-meta"><span class="tag tag-llm">LLM</span><span class="tag tag-research">에이전트</span></div>
+          <div class="card-title">Stripe Minions — 자율 코딩 에이전트, 주당 PR 1,300건 자동 생성</div>
+          <div class="card-desc">Stripe 엔지니어링팀이 <strong>Minions 에이전트 시스템</strong>을 공개했다. Slack 메시지·버그 리포트·기능 요청을 입력받아 주당 1,300건 이상의 프로덕션 레디 PR을 자동 생성한다. 인간 리뷰를 유지하면서도 신뢰성을 확보했다는 점에서 산업용 코딩 에이전트의 새 기준으로 주목받고 있다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">엔지니어 1인당 산출량 급증. 코드 리뷰·테스트 자동화가 핵심 경쟁력으로 부상.</span>
+            <a class="source-link" href="https://llm-stats.com/ai-news" target="_blank">Source ↗</a>
+          </div>
         </div>
-        <div class="card-footer">
-          <span></span>
-          <a class="card-link" href="https://llm-stats.com/ai-news" target="_blank">자세히 →</a>
-        </div>
-      </article>
+      </div>
 
     </div>
-  </section>
+  </div>
 
-  <!-- ══════════════════════════════ VLM ══════════════════════════════ -->
-  <section class="section">
-    <h2 class="section-title">👁️ VLM &amp; 멀티모달</h2>
-    <div class="grid">
+  <!-- ── VLM ── -->
+  <div class="section sec-vlm">
+    <div class="section-header">
+      <div class="section-icon">👁️</div>
+      <h2>VLM &amp; 멀티모달</h2>
+      <span class="section-count">3 items</span>
+    </div>
+    <div class="cards-grid">
 
-      <article class="card featured">
-        <div class="thumb ph-vlm" style="min-height:240px">🔬</div>
+      <div class="card">
+        <div class="card-thumb">
+          <img src="https://www.koreaherald.com/data/content/image/2026/04/09/20260409050073.jpg" alt="EXAONE 4.5"
+               onerror="this.parentElement.innerHTML='<div class=\'thumb-placeholder ph-vlm\'>🔬<span>LG AI Research</span></div>'" />
+        </div>
         <div class="card-body">
-          <h3>LG EXAONE 4.5 공개 — STEM 벤치마크에서 GPT-5-mini·Claude 4.5 Sonnet 능가</h3>
-          <p>LG AI Research가 4월 9일 EXAONE 4.5 멀티모달 AI를 공개했다. 자체 비전 인코더와 LLM을 통합한 아키텍처로, 5개 주요 STEM 벤치마크 평균 77.3점을 기록해 OpenAI GPT-5-mini(73.5), Anthropic Claude 4.5 Sonnet(74.6), Alibaba Qwen-3 235B(77.0)를 모두 웃돌았다. Hugging Face에 연구·학술·교육 목적으로 공개됐다.</p>
-          <div class="tags">
-            <span class="tag tag-vlm">VLM</span>
-            <span class="tag tag-research">연구</span>
-            <span class="tag tag-oss">오픈소스</span>
+          <div class="card-meta"><span class="tag tag-research">Research</span><span class="tag tag-vlm">VLM</span><span class="tag tag-oss">Open Source</span></div>
+          <div class="card-title">LG EXAONE 4.5 공개 — STEM 벤치마크 77.3점, GPT-5-mini·Claude 4.5 Sonnet 능가</div>
+          <div class="card-desc">LG AI Research가 4월 9일 <strong>EXAONE 4.5</strong> 멀티모달 AI를 공개했다. 자체 비전 인코더와 LLM을 통합한 아키텍처로, 5개 주요 STEM 벤치마크 평균 77.3점을 기록해 OpenAI GPT-5-mini(73.5), Anthropic Claude 4.5 Sonnet(74.6), Alibaba Qwen-3 235B(77.0)를 웃돌았다. Hugging Face에 연구·학술·교육 목적으로 공개됐다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">한국 빅테크의 글로벌 VLM 경쟁력 입증. 오픈 공개로 학술 연구 활성화 기대.</span>
+            <a class="source-link" href="https://www.koreaherald.com/article/10714004" target="_blank">Source ↗</a>
           </div>
         </div>
-      </article>
+      </div>
 
-      <article class="card">
-        <div class="thumb ph-vlm">🤖</div>
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-vlm">🤖<span>VLA Research</span></div>
+        </div>
         <div class="card-body">
-          <h3>VLM4VLA — 비전-언어 모델을 로봇 행동 제어에 적용하는 연구 주목</h3>
-          <p>arXiv에 게재된 VLM4VLA 논문이 Vision-Language-Action(VLA) 모델에 기존 VLM을 재검토·적용하는 방법론을 체계화했다. 로봇 조작·자율주행 등 실세계 행동 정책에서 VLM의 상식 추론 능력을 활용하는 새 패러다임을 제시해 연구계의 주목을 받고 있다.</p>
-          <div class="tags"><span class="tag tag-vlm">VLM</span><span class="tag tag-research">연구</span></div>
+          <div class="card-meta"><span class="tag tag-vlm">VLM</span><span class="tag tag-research">Research</span></div>
+          <div class="card-title">VLM4VLA — 비전-언어 모델을 로봇 행동 제어(VLA)에 적용하는 연구 주목</div>
+          <div class="card-desc">arXiv에 게재된 <strong>VLM4VLA</strong> 논문이 Vision-Language-Action(VLA) 모델에 기존 VLM을 재검토·적용하는 방법론을 체계화했다. 로봇 조작·자율주행 등 실세계 행동 정책에서 VLM의 상식 추론 능력을 활용하는 새 패러다임을 제시해 연구계의 주목을 받고 있다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">체화 AI·로봇 분야에서 LLM 기반 추론의 활용 범위 확대. 범용 로봇 상용화 가속 신호.</span>
+            <a class="source-link" href="https://arxiv.org/abs/2601.03309" target="_blank">Source ↗</a>
+          </div>
         </div>
-        <div class="card-footer">
-          <span></span>
-          <a class="card-link" href="https://arxiv.org/abs/2601.03309" target="_blank">자세히 →</a>
-        </div>
-      </article>
+      </div>
 
-      <article class="card">
-        <div class="thumb ph-vlm">📊</div>
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-vlm">📱<span>Edge Device</span></div>
+        </div>
         <div class="card-body">
-          <h3>엣지 디바이스용 고효율 VLM — GPT-4V 수준 성능을 온디바이스로</h3>
-          <p>Nature Communications에 발표된 연구에서 엣지 디바이스 배포에 최적화된 멀티모달 대형 언어 모델이 공개됐다. GPT-4V에 준하는 성능을 스마트폰·IoT 기기에서 구현함으로써 프라이버시 보호와 오프라인 동작 가능성을 동시에 확보했다는 평가를 받고 있다.</p>
-          <div class="tags"><span class="tag tag-vlm">VLM</span><span class="tag tag-research">연구</span></div>
+          <div class="card-meta"><span class="tag tag-vlm">VLM</span><span class="tag tag-research">Research</span></div>
+          <div class="card-title">엣지 디바이스용 고효율 멀티모달 LLM — GPT-4V 수준 성능을 온디바이스로</div>
+          <div class="card-desc">Nature Communications에 발표된 연구에서 엣지 디바이스 배포에 최적화된 멀티모달 대형 언어 모델이 공개됐다. GPT-4V에 준하는 성능을 스마트폰·IoT 기기에서 구현함으로써 <strong>프라이버시 보호와 오프라인 동작 가능성</strong>을 동시에 확보했다는 평가를 받고 있다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">클라우드 의존 없는 멀티모달 AI 앱 구현. 의료·제조 등 민감 데이터 산업 적용 가능성 확대.</span>
+            <a class="source-link" href="https://www.nature.com/articles/s41467-025-61040-5" target="_blank">Source ↗</a>
+          </div>
         </div>
-        <div class="card-footer">
-          <span></span>
-          <a class="card-link" href="https://www.nature.com/articles/s41467-025-61040-5" target="_blank">자세히 →</a>
-        </div>
-      </article>
+      </div>
 
     </div>
-  </section>
+  </div>
 
-  <!-- ══════════════════════════════ 영상생성 ══════════════════════════════ -->
-  <section class="section">
-    <h2 class="section-title">🎬 이미지 / 영상 생성</h2>
-    <div class="grid">
+  <!-- ── Video Gen ── -->
+  <div class="section sec-video">
+    <div class="section-header">
+      <div class="section-icon">🎨</div>
+      <h2>이미지 / 영상 생성 AI</h2>
+      <span class="section-count">3 items</span>
+    </div>
+    <div class="cards-grid">
 
-      <article class="card featured">
-        <div class="thumb ph-video" style="min-height:240px">🎥</div>
+      <div class="card">
+        <div class="card-thumb">
+          <img src="https://www.veo3ai.io/og-veo4.jpg" alt="Google Veo 4"
+               onerror="this.parentElement.innerHTML='<div class=\'thumb-placeholder ph-video\'>🎥<span>Google Veo 4</span></div>'" />
+        </div>
         <div class="card-body">
-          <h3>Google Veo 4 공식 출시 — 30초·4K·네이티브 스토리보딩, AI 영상 새 기준 제시</h3>
-          <p>Google이 Veo 4를 공식 출시했다. 최대 30초 단일 패스 생성, 네이티브 스토리보딩, 4K 출력, 향상된 캐릭터 일관성, 제로샷 아바타 생성이 핵심 기능이다. 업계 기준인 클립 길이가 2024년 4~10초에서 2분 이상으로 확대되면서, 세그먼트 체이닝을 통한 5분 이상 영상도 가능해졌다.</p>
-          <div class="tags">
-            <span class="tag tag-video">영상생성</span>
-            <span class="tag tag-google">Google</span>
+          <div class="card-meta"><span class="tag tag-google">Google</span><span class="tag tag-video">Video</span></div>
+          <div class="card-title">Google Veo 4 공식 출시 — 30초·4K·네이티브 스토리보딩, AI 영상 새 기준</div>
+          <div class="card-desc">Google이 <strong>Veo 4</strong>를 공식 출시했다. 최대 30초 단일 패스 생성, 네이티브 스토리보딩, 4K 출력, 향상된 캐릭터 일관성, 제로샷 아바타 생성이 핵심 기능이다. 업계 기준 클립 길이가 2024년 4~10초에서 2026년 단일 패스 2분 이상으로 확대됐으며, 세그먼트 체이닝으로 5분 이상 영상도 가능해졌다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">전문 영상 제작 파이프라인의 AI 통합 가속. 소규모 크리에이터의 고품질 영상 제작 진입 장벽 대폭 하락.</span>
+            <a class="source-link" href="https://www.veo3ai.io/blog/veo-4-release-everything-you-need-to-know-2026" target="_blank">Source ↗</a>
           </div>
         </div>
-      </article>
+      </div>
 
-      <article class="card">
-        <div class="thumb ph-video">🌱</div>
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-video">🌱<span>SeeGen · Seedance</span></div>
+        </div>
         <div class="card-body">
-          <h3>SeeGen AI, Seedance 2.0 기반 크리에이티브 플랫폼 정식 출시</h3>
-          <p>SeeGen AI가 4월 15일 Seedance 2.0 기반의 종합 AI 영상 플랫폼을 정식 출시했다. 텍스트-투-비디오, 이미지-투-비디오, 프레임 레벨 편집, 멀티 레퍼런스 생성 등 크리에이터·마케터·스토리텔러를 위한 풀 스위트를 제공한다.</p>
-          <div class="tags"><span class="tag tag-video">영상생성</span></div>
+          <div class="card-meta"><span class="tag tag-video">Video</span></div>
+          <div class="card-title">SeeGen AI, Seedance 2.0 기반 크리에이티브 플랫폼 정식 출시</div>
+          <div class="card-desc">SeeGen AI가 4월 15일 <strong>Seedance 2.0</strong> 기반 종합 AI 영상 플랫폼을 정식 출시했다. 텍스트-투-비디오, 이미지-투-비디오, 프레임 레벨 편집, 멀티 레퍼런스 생성 등 크리에이터·마케터·스토리텔러를 위한 풀 스위트를 제공하며, "누구나 감독이 될 수 있다"는 슬로건 아래 접근성을 강조했다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">비전문가도 영화 수준 영상 제작 가능. 마케팅·광고·교육 콘텐츠 제작 비용 구조 변화.</span>
+            <a class="source-link" href="https://www.manilatimes.net/2026/04/15/tmt-newswire/globenewswire/seegen-ai-from-script-to-cinema-with-seedance-20-everyone-is-now-a-director/2320990" target="_blank">Source ↗</a>
+          </div>
         </div>
-        <div class="card-footer">
-          <span></span>
-          <a class="card-link" href="https://www.manilatimes.net/2026/04/15/tmt-newswire/globenewswire/seegen-ai-from-script-to-cinema-with-seedance-20-everyone-is-now-a-director/2320990" target="_blank">자세히 →</a>
-        </div>
-      </article>
+      </div>
 
-      <article class="card">
-        <div class="thumb ph-video">🐎</div>
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-video">🐴<span>Alibaba · HappyHorse</span></div>
+        </div>
         <div class="card-body">
-          <h3>Alibaba HappyHorse-1.0 — 오픈소스 AI 영상 벤치마크 1위 정체 공개</h3>
-          <p>4월 7일 Artificial Analysis 블라인드 테스트에서 텍스트-투-비디오·이미지-투-비디오 양 부문 1위를 차지한 HappyHorse-1.0의 개발사가 알리바바 ATH AI Innovation Unit임이 밝혀졌다. 익명으로 등록했다가 정상 등극 후 신원을 공개하는 방식이 주목을 받았다.</p>
-          <div class="tags"><span class="tag tag-video">영상생성</span><span class="tag tag-alibaba">Alibaba</span></div>
+          <div class="card-meta"><span class="tag tag-alibaba">Alibaba</span><span class="tag tag-video">Video</span></div>
+          <div class="card-title">Alibaba HappyHorse-1.0 — T2V·I2V 벤치마크 1위, 개발사 정체 공개</div>
+          <div class="card-desc">4월 7일 Artificial Analysis 블라인드 테스트 텍스트→비디오·이미지→비디오 양 부문 1위를 차지한 <strong>HappyHorse-1.0</strong>의 개발사가 알리바바 ATH AI Innovation Unit임이 밝혀졌다. 익명으로 등록 후 정상 등극 직후 신원을 공개하는 방식 자체가 화제가 됐다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">영상 생성 AI 시장에서 중국 빅테크의 위상 재확인. 오픈소스 생태계에 강력한 기준점 제시.</span>
+            <a class="source-link" href="https://www.cnbc.com/2026/04/10/alibaba-happyhorse-ai-video-model-benchmark-reveal.html" target="_blank">Source ↗</a>
+          </div>
         </div>
-        <div class="card-footer">
-          <span></span>
-          <a class="card-link" href="https://www.cnbc.com/2026/04/10/alibaba-happyhorse-ai-video-model-benchmark-reveal.html" target="_blank">자세히 →</a>
-        </div>
-      </article>
+      </div>
 
     </div>
-  </section>
+  </div>
 
-  <!-- ══════════════════════════════ 기업 발표 ══════════════════════════════ -->
-  <section class="section">
-    <h2 class="section-title">🏢 기업 발표</h2>
-    <div class="grid">
+  <!-- ── Company ── -->
+  <div class="section sec-company">
+    <div class="section-header">
+      <div class="section-icon">🏢</div>
+      <h2>주요 기업 발표</h2>
+      <span class="section-count">3 items</span>
+    </div>
+    <div class="cards-grid">
 
-      <article class="card featured">
-        <div class="thumb ph-company" style="min-height:240px">💰</div>
+      <div class="card">
+        <div class="card-thumb">
+          <img src="https://www.anthropic.com/images/news/google-broadcom-partnership-compute.jpg" alt="Anthropic Revenue"
+               onerror="this.parentElement.innerHTML='<div class=\'thumb-placeholder ph-company\'>💰<span>Anthropic</span></div>'" />
+        </div>
         <div class="card-body">
-          <h3>Anthropic 연환산 매출 $300억 돌파 — OpenAI($250억) 추월, 기업 AI 게임체인저</h3>
-          <p>4월 7일 Anthropic이 연환산 매출(ARR) $300억을 돌파, OpenAI($250억)를 처음으로 추월했다. 1백만 달러 이상 연간 계약 기업 고객이 1,000곳을 넘어섰으며, 이는 두 달 만에 두 배로 늘어난 수치다. Google·Broadcom과의 컴퓨트 파트너십 확대도 함께 발표했다.</p>
-          <div class="tags">
-            <span class="tag tag-anthropic">Anthropic</span>
-            <span class="tag tag-google">Google</span>
+          <div class="card-meta"><span class="tag tag-anthropic">Anthropic</span><span class="tag tag-google">Google</span></div>
+          <div class="card-title">Anthropic 연환산 매출 $300억 돌파 — 처음으로 OpenAI($250억) 추월</div>
+          <div class="card-desc">4월 7일 Anthropic이 연환산 매출(ARR) <strong>$300억을 돌파</strong>해 OpenAI($250억)를 처음으로 추월했다. 연간 $100만 이상 계약 기업 고객이 1,000곳을 넘어섰으며, 이는 두 달 만에 두 배로 늘어난 수치다. Google·Broadcom과의 컴퓨트 파트너십 확대도 함께 발표하며 인프라 확장에 나섰다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">기업 AI 시장 판도 변화 신호. OpenAI 독주 체제 종식 가능성. 클로드 생태계 투자 확대 기대.</span>
+            <a class="source-link" href="https://www.anthropic.com/news/google-broadcom-partnership-compute" target="_blank">Source ↗</a>
           </div>
         </div>
-      </article>
+      </div>
 
-      <article class="card">
-        <div class="thumb ph-company">🔷</div>
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-company">🔷<span>Microsoft</span></div>
+        </div>
         <div class="card-body">
-          <h3>Microsoft MAI 3종 출격 — 전사·음성·이미지 전 영역 클라우드 경쟁 선전포고</h3>
-          <p>Microsoft가 4월 2일 MAI-Transcribe-1(25개 언어 음성 전사, Azure Fast 대비 2.5배 빠름), MAI-Voice-1(1초에 60초 오디오 생성, 커스텀 보이스), MAI-Image-2(영상 생성)를 공개했다. 세 모델 모두 Amazon·Google 동급 서비스보다 저렴한 가격을 내세우며 엔터프라이즈 클라우드 워크로드 공략에 나섰다.</p>
-          <div class="tags"><span class="tag tag-microsoft">Microsoft</span></div>
+          <div class="card-meta"><span class="tag tag-microsoft">Microsoft</span></div>
+          <div class="card-title">Microsoft MAI 3종 출격 — 전사·음성·이미지 전 영역 클라우드 경쟁 선전포고</div>
+          <div class="card-desc">Microsoft가 4월 2일 <strong>MAI-Transcribe-1</strong>(25개 언어, Azure Fast 대비 2.5배 빠른 음성 전사), <strong>MAI-Voice-1</strong>(1초에 60초 오디오 생성, 커스텀 보이스), <strong>MAI-Image-2</strong>(영상 생성)를 공개했다. 세 모델 모두 Amazon·Google 동급 서비스보다 저렴한 가격으로 엔터프라이즈 클라우드 워크로드를 공략한다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">클라우드 AI 서비스 가격 인하 압박 심화. Azure 생태계 기업 고객의 Lock-in 효과 강화.</span>
+            <a class="source-link" href="https://techcrunch.com/2026/04/02/microsoft-takes-on-ai-rivals-with-three-new-foundational-models/" target="_blank">Source ↗</a>
+          </div>
         </div>
-        <div class="card-footer">
-          <span></span>
-          <a class="card-link" href="https://techcrunch.com/2026/04/02/microsoft-takes-on-ai-rivals-with-three-new-foundational-models/" target="_blank">자세히 →</a>
-        </div>
-      </article>
+      </div>
 
-      <article class="card">
-        <div class="thumb ph-company">🦋</div>
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-company">🦋<span>Meta</span></div>
+        </div>
         <div class="card-body">
-          <h3>Meta Muse Spark 출시 — 2026년 AI 설비투자 최대 $1,350억 예고</h3>
-          <p>Meta가 1년여 만의 대형 AI 모델 Muse Spark를 출시했다. Intelligence Index 52점의 멀티모달 추론 모델로 WhatsApp·Instagram·Facebook·Messenger·AI 안경 등 전 플랫폼에 통합됐다. 2026년 AI 관련 설비투자를 $1,150억~$1,350억으로 제시하며 전년 대비 2배 규모를 선언했다.</p>
-          <div class="tags"><span class="tag tag-meta">Meta</span></div>
+          <div class="card-meta"><span class="tag tag-meta">Meta</span></div>
+          <div class="card-title">Meta Muse Spark 출시 — 2026년 AI 설비투자 최대 $1,350억 예고</div>
+          <div class="card-desc">Meta가 1년여 만의 대형 AI 모델 <strong>Muse Spark</strong>를 출시했다. Intelligence Index 52점의 멀티모달 추론 모델로 WhatsApp·Instagram·Facebook·Messenger·AI 안경 전 플랫폼에 통합됐다. 2026년 AI 관련 설비투자를 <strong>$1,150억~$1,350억</strong>으로 제시하며 전년 대비 약 2배 규모를 선언했다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">AI 인프라 투자 군비 경쟁 심화. 소셜 미디어 플랫폼에 멀티모달 AI 기본 탑재 시대 도래.</span>
+            <a class="source-link" href="https://247wallst.com/investing/2026/04/12/meta-platforms-finally-releases-muse-spark-is-the-ai-model-worth-the-wait/" target="_blank">Source ↗</a>
+          </div>
         </div>
-        <div class="card-footer">
-          <span></span>
-          <a class="card-link" href="https://247wallst.com/investing/2026/04/12/meta-platforms-finally-releases-muse-spark-is-the-ai-model-worth-the-wait/" target="_blank">자세히 →</a>
-        </div>
-      </article>
+      </div>
 
     </div>
-  </section>
+  </div>
 
-  <!-- ══════════════════════════════ 연구 ══════════════════════════════ -->
-  <section class="section">
-    <h2 class="section-title">🔬 연구 하이라이트</h2>
-    <div class="grid">
+  <!-- ── Research ── -->
+  <div class="section sec-research">
+    <div class="section-header">
+      <div class="section-icon">🔬</div>
+      <h2>연구 하이라이트</h2>
+      <span class="section-count">3 items</span>
+    </div>
+    <div class="cards-grid">
 
-      <article class="card featured">
-        <div class="thumb ph-research" style="min-height:240px">🖥️</div>
+      <div class="card">
+        <div class="card-thumb">
+          <img src="https://blogs.nvidia.com/wp-content/uploads/2026/01/ltx-2-rtx-video-generation.jpg" alt="NVIDIA RTX LTX-2"
+               onerror="this.parentElement.innerHTML='<div class=\'thumb-placeholder ph-research\'>🖥️<span>NVIDIA RTX</span></div>'" />
+        </div>
         <div class="card-body">
-          <h3>NVIDIA RTX + LTX-2 — 소비자 PC에서 4K AI 영상 생성 실현</h3>
-          <p>NVIDIA가 RTX AI Garage를 통해 LTX-2 모델과 ComfyUI 업그레이드를 통해 소비자용 PC에서 4K AI 영상 생성을 가능하게 했다. CES 2026에서 발표한 오픈 모델 영상 생성 파이프라인이 RTX 가속과 결합해 클라우드 의존 없이 고품질 영상 창작이 가능해졌다.</p>
-          <div class="tags">
-            <span class="tag tag-research">연구</span>
-            <span class="tag tag-video">영상생성</span>
+          <div class="card-meta"><span class="tag tag-research">Research</span><span class="tag tag-video">Video</span></div>
+          <div class="card-title">NVIDIA RTX + LTX-2 — 소비자 PC에서 4K AI 영상 생성 실현</div>
+          <div class="card-desc">NVIDIA가 RTX AI Garage를 통해 <strong>LTX-2</strong> 모델과 ComfyUI 업그레이드를 결합해 소비자용 PC에서 4K AI 영상 생성을 가능하게 했다. CES 2026에서 발표한 오픈 모델 영상 생성 파이프라인이 RTX 가속과 결합해 클라우드 의존 없이 고품질 영상 창작이 가능해졌다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">로컬 영상 생성의 대중화. 구독료·API 비용 없는 창작 환경 실현. NVIDIA RTX 판매 촉진 효과.</span>
+            <a class="source-link" href="https://blogs.nvidia.com/blog/rtx-ai-garage-ces-2026-open-models-video-generation/" target="_blank">Source ↗</a>
           </div>
         </div>
-      </article>
+      </div>
 
-      <article class="card">
-        <div class="thumb ph-research">📖</div>
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-research">📖<span>SVLM Survey</span></div>
+        </div>
         <div class="card-body">
-          <h3>소형 비전-언어 모델(SVLM) 종합 서베이 — 스케일 다운, 성능 업</h3>
-          <p>ScienceDirect에 게재된 최신 서베이가 소형 VLM의 아키텍처 발전을 체계적으로 정리했다. 파라미터 효율화·지식 증류·양자화 기법이 결합돼 3B 이하 모델이 이전 세대 10B+ 모델을 뛰어넘는 사례가 늘고 있음을 보고했다.</p>
-          <div class="tags"><span class="tag tag-research">연구</span><span class="tag tag-vlm">VLM</span></div>
+          <div class="card-meta"><span class="tag tag-research">Research</span><span class="tag tag-vlm">VLM</span></div>
+          <div class="card-title">소형 비전-언어 모델(SVLM) 종합 서베이 — 스케일 다운, 성능 업</div>
+          <div class="card-desc">ScienceDirect에 게재된 최신 서베이가 소형 VLM의 아키텍처 발전을 체계적으로 정리했다. 파라미터 효율화·지식 증류·양자화 기법이 결합돼 <strong>3B 이하 모델이 이전 세대 10B+ 모델을 뛰어넘는</strong> 사례가 늘고 있음을 보고했다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">엣지·온디바이스 VLM 도입 가속. 소규모 스타트업도 경쟁력 있는 멀티모달 제품 구축 가능.</span>
+            <a class="source-link" href="https://www.sciencedirect.com/science/article/abs/pii/S156625352500867X" target="_blank">Source ↗</a>
+          </div>
         </div>
-        <div class="card-footer">
-          <span></span>
-          <a class="card-link" href="https://www.sciencedirect.com/science/article/abs/pii/S156625352500867X" target="_blank">자세히 →</a>
-        </div>
-      </article>
+      </div>
 
-      <article class="card">
-        <div class="thumb ph-research">🔗</div>
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-research">🔗<span>6G + LLM</span></div>
+        </div>
         <div class="card-body">
-          <h3>6G 네트워크와 LLM 통합 — Nature Reviews 게재</h3>
-          <p>Nature Reviews Electrical Engineering에 6G 표준부터 온디바이스 네트워크까지 LLM을 통합하는 연구가 실렸다. 네트워크 최적화·실시간 추론·엣지 인텔리전스를 위한 LLM 활용 방안을 제시하며 통신·AI 융합 연구의 방향을 제시했다.</p>
-          <div class="tags"><span class="tag tag-research">연구</span><span class="tag tag-llm">LLM</span></div>
+          <div class="card-meta"><span class="tag tag-research">Research</span><span class="tag tag-llm">LLM</span></div>
+          <div class="card-title">6G 네트워크와 LLM 통합 연구 — Nature Reviews Electrical Engineering 게재</div>
+          <div class="card-desc">Nature Reviews Electrical Engineering에 6G 표준부터 온디바이스 네트워크까지 LLM을 통합하는 연구가 실렸다. 네트워크 최적화·실시간 추론·엣지 인텔리전스를 위한 LLM 활용 방안을 제시하며 <strong>통신·AI 융합</strong> 연구의 방향을 제시했다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">6G 상용화 시 AI 추론이 네트워크 인프라에 내재화. 통신사·AI 기업 간 협력 모델 구체화.</span>
+            <a class="source-link" href="https://www.nature.com/articles/s44287-025-00239-6" target="_blank">Source ↗</a>
+          </div>
         </div>
-        <div class="card-footer">
-          <span></span>
-          <a class="card-link" href="https://www.nature.com/articles/s44287-025-00239-6" target="_blank">자세히 →</a>
-        </div>
-      </article>
+      </div>
 
     </div>
-  </section>
+  </div>
 
-  <!-- ══════════════════════════════ 정책 ══════════════════════════════ -->
-  <section class="section">
-    <h2 class="section-title">⚖️ 정책 &amp; 규제</h2>
-    <div class="grid">
+  <!-- ── Policy ── -->
+  <div class="section sec-policy">
+    <div class="section-header">
+      <div class="section-icon">⚖️</div>
+      <h2>정책 &amp; 규제</h2>
+      <span class="section-count">3 items</span>
+    </div>
+    <div class="cards-grid">
 
-      <article class="card featured">
-        <div class="thumb ph-policy" style="min-height:240px">🏛️</div>
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-policy">🏛️<span>White House</span></div>
+        </div>
         <div class="card-body">
-          <h3>백악관, 국가 AI 정책 프레임워크 발표 — 주 AI 법 연방 선점 권고</h3>
-          <p>백악관이 3월 20일 국가 AI 정책 프레임워크 입법 권고안을 발표했다. 핵심은 주(州) AI 규제의 연방 선점으로, 50개 상충 규제 대신 단일 최소 기준을 목표로 한다. 아동 보호·표현의 자유·혁신 친화적 규제를 3대 축으로 삼으며, 새로운 연방 규제 기관 신설은 명시적으로 반대했다. 1분기에는 AI 관련 법안이 비동의 이미지·챗봇·중소기업 지원 등 다수 분야에서 의회에 제출됐다.</p>
-          <div class="tags">
-            <span class="tag tag-policy">정책</span>
+          <div class="card-meta"><span class="tag tag-policy">Policy</span></div>
+          <div class="card-title">백악관, 국가 AI 정책 프레임워크 발표 — 주(州) AI 규제 연방 선점 권고</div>
+          <div class="card-desc">백악관이 3월 20일 <strong>국가 AI 정책 프레임워크 입법 권고안</strong>을 발표했다. 핵심은 50개 상충 주 규제 대신 단일 최소 연방 기준 확립이다. 아동 보호·표현의 자유·혁신 친화 규제를 3대 축으로 삼으며, 새로운 연방 AI 규제 기관 신설은 명시적으로 반대했다. 1분기에는 비동의 이미지·AI 챗봇·중소기업 지원 관련 법안이 다수 발의됐다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">주 단위 AI 규제 파편화 완화 기대. 단일 기준 하에 기업 컴플라이언스 비용 감소 가능.</span>
+            <a class="source-link" href="https://www.consumerfinancemonitor.com/2026/04/08/the-white-houses-national-policy-framework-for-artificial-intelligence-what-it-means-and-what-comes-next/" target="_blank">Source ↗</a>
           </div>
         </div>
-      </article>
+      </div>
 
-      <article class="card">
-        <div class="thumb ph-policy">🌐</div>
+      <div class="card">
+        <div class="card-thumb">
+          <img src="https://www.roborhythms.com/wp-content/uploads/2026/04/openai-anthropic-google-fight-chinese-ai-copying-2026.avif" alt="AI 3사 연합"
+               onerror="this.parentElement.innerHTML='<div class=\'thumb-placeholder ph-policy\'>🛡️<span>AI Coalition</span></div>'" />
+        </div>
         <div class="card-body">
-          <h3>OpenAI·Anthropic·Google, 중국 AI 모델 도용 공동 대응 — FMF 인텔 공유</h3>
-          <p>4월 6~7일 세 기업이 Frontier Model Forum을 통해 중국 AI 기업의 적대적 증류(adversarial distillation)를 통한 모델 복제에 공동 대응한다고 발표했다. Anthropic은 DeepSeek·Moonshot AI·MiniMax가 약 2만 4천 개의 사기 계정을 통해 Claude와 1,600만 건 이상 교류했다고 밝혔다.</p>
-          <div class="tags">
-            <span class="tag tag-policy">정책</span>
-            <span class="tag tag-openai">OpenAI</span>
-            <span class="tag tag-anthropic">Anthropic</span>
-            <span class="tag tag-google">Google</span>
+          <div class="card-meta"><span class="tag tag-policy">Policy</span><span class="tag tag-openai">OpenAI</span><span class="tag tag-anthropic">Anthropic</span><span class="tag tag-google">Google</span></div>
+          <div class="card-title">OpenAI·Anthropic·Google, 중국 AI 모델 도용 공동 대응 — FMF 인텔 공유</div>
+          <div class="card-desc">4월 6~7일 세 기업이 <strong>Frontier Model Forum</strong>을 통해 중국 AI 기업의 적대적 증류(adversarial distillation)를 통한 모델 복제에 공동 대응하기로 합의했다. Anthropic은 DeepSeek·Moonshot AI·MiniMax가 약 2만 4천 개 사기 계정을 통해 Claude와 1,600만 건 이상 교류했다고 밝혔다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">AI 지식재산 보호 논의 본격화. 경쟁사 간 이례적 협력이 업계 새 표준으로 이어질 가능성.</span>
+            <a class="source-link" href="https://www.bloomberg.com/news/articles/2026-04-06/openai-anthropic-google-unite-to-combat-model-copying-in-china" target="_blank">Source ↗</a>
           </div>
         </div>
-        <div class="card-footer">
-          <span></span>
-          <a class="card-link" href="https://www.bloomberg.com/news/articles/2026-04-06/openai-anthropic-google-unite-to-combat-model-copying-in-china" target="_blank">자세히 →</a>
-        </div>
-      </article>
+      </div>
 
-      <article class="card">
-        <div class="thumb ph-policy">📋</div>
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-policy">🌐<span>Global AI Law</span></div>
+        </div>
         <div class="card-body">
-          <h3>글로벌 AI 규제 동향 4월 — EU AI Act 시행·미국 Q1 입법 업데이트</h3>
-          <p>Eversheds Sutherland의 4월 글로벌 AI 규제 업데이트에 따르면, EU AI Act 의무 이행이 단계적으로 진행 중이며, 미국은 Q1에 비동의 이미지·AI 챗봇·중소기업 지원 관련 법안이 다수 제출됐다. 주 AI 법과 연방 선점 간의 긴장이 2026년 입법의 핵심 쟁점으로 부상했다.</p>
-          <div class="tags"><span class="tag tag-policy">정책</span></div>
+          <div class="card-meta"><span class="tag tag-policy">Policy</span></div>
+          <div class="card-title">글로벌 AI 규제 동향 4월 — EU AI Act 단계 이행·미국 Q1 입법 업데이트</div>
+          <div class="card-desc">Eversheds Sutherland 4월 글로벌 AI 규제 업데이트에 따르면, EU AI Act 의무 이행이 단계적으로 진행 중이며 미국은 Q1에 다수 AI 관련 법안이 제출됐다. <strong>주 AI 법과 연방 선점 간 긴장</strong>이 2026년 입법의 핵심 쟁점으로 부상했고, 미국 Q1 기준 600개 이상의 AI 법안이 발의됐다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">규제 지형 불확실성 지속. 다국가 사업 기업의 지역별 컴플라이언스 비용 증가 불가피.</span>
+            <a class="source-link" href="https://www.eversheds-sutherland.com/en/united-states/insights/gloabl-ai-bulletin-april-2026" target="_blank">Source ↗</a>
+          </div>
         </div>
-        <div class="card-footer">
-          <span></span>
-          <a class="card-link" href="https://www.eversheds-sutherland.com/en/united-states/insights/gloabl-ai-bulletin-april-2026" target="_blank">자세히 →</a>
-        </div>
-      </article>
+      </div>
 
     </div>
-  </section>
+  </div>
 
-</main>
+</div>
 
-<footer style="text-align:center;padding:32px;color:var(--muted2);font-size:.8rem;border-top:1px solid var(--border);margin-top:16px">
-  AI Daily Report · 2026-04-16 · Generated by Claude
-</footer>
+<div class="footer">
+  <div><strong>AI Daily Trends Report</strong> — 2026년 4월 16일 (목요일)</div>
+  <div class="gen-time">Generated: 2026-04-16 · Powered by Claude Sonnet 4.6 + Web Search</div>
+  <div class="sources">
+    <a href="https://fazm.ai/blog/latest-llm-releases-april-2026">fazm.ai</a>
+    <a href="https://llm-stats.com/ai-news">llm-stats.com</a>
+    <a href="https://www.koreaherald.com/article/10714004">Korea Herald</a>
+    <a href="https://www.cnbc.com/2026/04/10/alibaba-happyhorse-ai-video-model-benchmark-reveal.html">CNBC</a>
+    <a href="https://techcrunch.com/2026/04/02/microsoft-takes-on-ai-rivals-with-three-new-foundational-models/">TechCrunch</a>
+    <a href="https://247wallst.com/investing/2026/04/12/meta-platforms-finally-releases-muse-spark-is-the-ai-model-worth-the-wait/">24/7 Wall St.</a>
+    <a href="https://www.veo3ai.io/blog/veo-4-release-everything-you-need-to-know-2026">Veo3AI</a>
+    <a href="https://blogs.nvidia.com/blog/rtx-ai-garage-ces-2026-open-models-video-generation/">NVIDIA Blog</a>
+    <a href="https://www.bloomberg.com/news/articles/2026-04-06/openai-anthropic-google-unite-to-combat-model-copying-in-china">Bloomberg</a>
+    <a href="https://www.consumerfinancemonitor.com/2026/04/08/the-white-houses-national-policy-framework-for-artificial-intelligence-what-it-means-and-what-comes-next/">Consumer Finance Monitor</a>
+    <a href="https://www.eversheds-sutherland.com/en/united-states/insights/gloabl-ai-bulletin-april-2026">Eversheds Sutherland</a>
+  </div>
+</div>
 
 </body>
 </html>
