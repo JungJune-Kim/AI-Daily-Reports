@@ -539,9 +539,9 @@
   var nav=document.getElementById('report-nav');
   if(!nav)return;
   var h='';
-  h+=older?'<a class="nav-btn" href="'+older.file+'">← '+fmt(older.date)+'</a>':'<span class="nav-btn disabled">← 이전 리포트</span>';
-  h+='<span class="nav-current">'+fmt(reports[idx].date)+'<small>'+dow(reports[idx].date)+'</small></span>';
-  h+=newer?'<a class="nav-btn" href="'+newer.file+'">'+fmt(newer.date)+' →</a>':'<span class="nav-btn disabled">다음 리포트 →</span>';
+  h+=older?'<a class="nav-btn" href="'+older.file+'">← 이전</a>':'<span class="nav-btn disabled">← 이전</span>';
+  h+='<span class="nav-current">'+fmt(reports[idx].date)+' '+dow(reports[idx].date)+'</span>';
+  h+=newer?'<a class="nav-btn" href="'+newer.file+'">다음 →</a>':'<span class="nav-btn disabled">다음 →</span>';
   nav.innerHTML=h;
 })();
 </script>
