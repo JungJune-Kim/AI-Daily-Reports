@@ -12,7 +12,11 @@
 AI_Daily_reports/
 ├── index.html                        ← 통합 대시보드 (정적, 수정 불필요)
 ├── reports-list.js                   ← 리포트 매니페스트 (에이전트가 매일 업데이트)
+├── run_daily_report.sh               ← 로컬 자동 실행 스크립트 (crontab에 등록됨)
 ├── YYYY-MM-DD_AI_Daily_Report.html   ← 날짜별 리포트 파일
+├── logs/
+│   ├── report.log                    ← 실행 로그 (stdout)
+│   └── report-error.log              ← 에러 로그 (stderr)
 └── handoff.md                        ← 이 파일
 ```
 
@@ -44,31 +48,79 @@ window.AI_REPORTS = [
 
 ---
 
-## 스케줄 트리거
+## 자동화 설정 (로컬 Mac + Claude CLI)
 
+### 구조 요약
+
+```
+crontab (매 30분, 09:00~23:30)
+  └─ run_daily_report.sh 호출
+       ├─ 오늘 이미 실행됐으면? → 종료 (lock file: logs/.last_run_date)
+       ├─ 09:00 이전이면? → 종료
+       ├─ 오늘 리포트 파일 이미 있으면? → 종료
+       └─ Claude CLI 실행 → 뉴스 수집 → HTML 생성 → git push
+```
+
+### 왜 crontab 방식인가
+- GitHub 레포가 개인 계정, Claude 앱은 회사 계정 → claude.ai 원격 트리거의 GitHub 커넥터 인증 불가
+- 로컬 Mac의 git 자격증명(개인)으로 push → 별도 인증 불필요
+- `LaunchAgents` 폴더가 root 소유라 직접 쓰기 불가 → crontab으로 대체
+
+### Sleep 후 깨어났을 때 동작
+| 상황 | 동작 |
+|---|---|
+| 정확히 9시에 깨어남 | 9:00 cron tick에 즉시 실행 |
+| 11시에 깨어남 | 11:00 또는 11:30 cron tick에 실행 |
+| 이미 오늘 생성됐으면 | lock file 확인 후 즉시 종료 (중복 없음) |
+| 자정 이후 켜진 경우 | 9시 이전 차단 로직 → 9:00 tick까지 대기 |
+
+### 등록된 crontab
+```
+*/30 9-23 * * * /bin/bash "/Users/user/Desktop/Claude Works/AI_Daily_reports/run_daily_report.sh" >> "/Users/user/Desktop/Claude Works/AI_Daily_reports/logs/report.log" 2>&1
+```
+
+### 주요 명령어
+```bash
+# 현재 crontab 확인
+crontab -l
+
+# crontab 편집
+crontab -e
+
+# crontab 전체 삭제
+crontab -r
+
+# 수동 실행 (테스트 또는 누락 리포트 보충)
+/bin/bash "/Users/user/Desktop/Claude Works/AI_Daily_reports/run_daily_report.sh"
+
+# 실행 로그 실시간 확인
+tail -f "/Users/user/Desktop/Claude Works/AI_Daily_reports/logs/report.log"
+```
+
+### run_daily_report.sh 핵심 로직
+- `logs/.last_run_date` 파일에 오늘 날짜가 기록되어 있으면 즉시 종료 (중복 방지)
+- 현재 시각이 09:00 이전이면 즉시 종료
+- `YYYY-MM-DD_AI_Daily_Report.html`이 이미 존재하면 즉시 종료
+- 위 조건 모두 통과 시 `claude -p "[프롬프트]"` 실행
+- 성공 시 `logs/.last_run_date`에 오늘 날짜 기록
+- claude 경로: `/Users/user/.local/bin/claude`
+
+### 원격 트리거 (현재 미사용 — 참고용)
 | 항목 | 값 |
 |---|---|
 | Trigger ID | `trig_01FwjuEy8a9HLG3H5VzwpEoY` |
 | 관리 URL | https://claude.ai/code/scheduled/trig_01FwjuEy8a9HLG3H5VzwpEoY |
-| 실행 시각 | 매일 00:00 UTC = 09:00 KST |
-| Cron | `0 0 * * *` |
+| 상태 | `enabled: false` (GitHub 커넥터 인증 문제로 비활성) |
+| Cron | `0 0 * * *` (00:00 UTC = 09:00 KST) |
 | 모델 | claude-sonnet-4-6 |
 | Environment ID | `env_013XZkH4ZBbRzjNmudEVBTC8` |
 | GitHub 레포 | https://github.com/JungJune-Kim/AI-Daily-Reports |
-
-### 에이전트 수행 순서
-1. `date +%Y-%m-%d` 로 오늘 날짜 확인
-2. WebSearch 6-8 쿼리 (LLM, VLM, 영상생성, 기업, 연구, 정책)
-3. 각 기사 URL에 WebFetch → og:image 수집 (403/없으면 null, 플레이스홀더 사용)
-4. `YYYY-MM-DD_AI_Daily_Report.html` 생성 (썸네일 카드 디자인, 화이트 테마)
-5. `reports-list.js` 읽기 → 오늘 항목 맨 앞에 추가 → 덮어쓰기
-6. `git add` + `git commit -m 'feat: AI daily report YYYY-MM-DD'` + `git push origin main`
 
 ---
 
 ## HTML 리포트 디자인 스펙
 
-### 색상 팔레트 (화이트 테마 — 현재 기준)
+### 색상 팔레트 (화이트 테마)
 ```css
 :root {
   --bg: #f1f5f9;       /* 페이지 배경 */
@@ -104,8 +156,7 @@ window.AI_REPORTS = [
 </body>
 ```
 
-### 폰트 크기 (2026-04-16 기준, +2px 적용 후)
-기존 CSS에 아래 오버라이드 블록을 별도 `<style>`로 추가한다 (기존 스타일 블록 수정 금지).
+### 폰트 크기 오버라이드 블록 (기존 style 뒤에 별도 추가)
 ```css
 body{font-size:16px}
 .date-chip{font-size:13px}
@@ -135,7 +186,7 @@ body{font-size:16px}
 .nav-current{font-size:13px;font-weight:700;color:var(--text);text-align:center}
 ```
 
-### 날짜 네비게이션 JS (</body> 직전에 삽입)
+### 날짜 네비게이션 JS (</body> 직전)
 ```html
 <script>
 (function(){
@@ -158,19 +209,9 @@ body{font-size:16px}
 })();
 </script>
 ```
-- `reports-list.js` 배열은 최신순(index 0 = 가장 최근)
+- `reports-list.js` 배열은 최신순 (index 0 = 가장 최근)
 - `older` = idx+1 (이전 날짜), `newer` = idx-1 (다음 날짜)
 - 맨 처음/마지막 리포트에서는 해당 방향 버튼 자동 비활성화
-
-### 섹션 구성 및 플레이스홀더 클래스
-| 섹션 | 섹션 클래스 | 플레이스홀더 클래스 | 배경 그라디언트 |
-|---|---|---|---|
-| LLM 업데이트 | `sec-llm` | `ph-llm` | `#eef2ff → #e0e7ff` |
-| VLM & 멀티모달 | `sec-vlm` | `ph-vlm` | `#e0f2fe → #bae6fd` |
-| 이미지/영상 생성 | `sec-video` | `ph-video` | `#faf5ff → #ede9fe` |
-| 기업 발표 | `sec-company` | `ph-company` | `#f0fdf4 → #dcfce7` |
-| 연구 하이라이트 | `sec-research` | `ph-research` | `#fdf4ff → #f3e8ff` |
-| 정책 & 규제 | `sec-policy` | `ph-policy` | `#fefce8 → #fef9c3` |
 
 ### 헤더 구조
 ```html
@@ -181,16 +222,25 @@ body{font-size:16px}
 </div>
 ```
 
+### 섹션 구성
+| 섹션 | 섹션 클래스 | 플레이스홀더 클래스 | 그라디언트 |
+|---|---|---|---|
+| LLM 업데이트 | `sec-llm` | `ph-llm` | `#eef2ff → #e0e7ff` |
+| VLM & 멀티모달 | `sec-vlm` | `ph-vlm` | `#e0f2fe → #bae6fd` |
+| 이미지/영상 생성 | `sec-video` | `ph-video` | `#faf5ff → #ede9fe` |
+| 기업 발표 | `sec-company` | `ph-company` | `#f0fdf4 → #dcfce7` |
+| 연구 하이라이트 | `sec-research` | `ph-research` | `#fdf4ff → #f3e8ff` |
+| 정책 & 규제 | `sec-policy` | `ph-policy` | `#fefce8 → #fef9c3` |
+
 ### 카드 구조
 ```html
 <div class="card">
   <div class="card-thumb">
-    <img src="[og:image URL]" alt="..." onerror="this.parentElement.innerHTML='<div class=\'thumb-placeholder ph-XXX\'>EMOJI<span>LABEL</span></div>'" />
-    <!-- 또는 이미지 없을 때: -->
-    <div class="thumb-placeholder ph-XXX">EMOJI<span>LABEL</span></div>
+    <img src="[og:image URL]" alt="..."
+         onerror="this.parentElement.innerHTML='<div class=\'thumb-placeholder ph-XXX\'>EMOJI<span>LABEL</span></div>'" />
   </div>
   <div class="card-body">
-    <div class="card-meta"><span class="tag tag-XXX">TAG</span> ...</div>
+    <div class="card-meta"><span class="tag tag-XXX">TAG</span></div>
     <div class="card-title">제목</div>
     <div class="card-desc">본문. <strong>강조어</strong> 포함.</div>
     <div class="card-impact">
@@ -201,9 +251,9 @@ body{font-size:16px}
   </div>
 </div>
 ```
-- 각 섹션의 **첫 번째 카드**는 `grid-column: 1 / -1` (전체 너비) — CSS `.cards-grid .card:first-child{grid-column:1/-1}` 로 자동 처리
-- 썸네일 높이: 일반 카드 180px, 첫 번째(피처드) 카드 240px
-- 소스 링크 텍스트: **"자세히 보기"** (영문 "Source ↗" 사용 금지)
+- 각 섹션 첫 번째 카드는 전체 너비 (CSS `.cards-grid .card:first-child{grid-column:1/-1}` 자동 처리)
+- 썸네일 높이: 일반 180px / 첫 번째 카드 240px
+- 소스 링크 텍스트: **"자세히 보기"** ("Source ↗" 사용 금지)
 
 ### 태그 클래스
 ```css
@@ -230,11 +280,7 @@ body{font-size:16px}
 - 에이전트는 매일 리포트 HTML + reports-list.js 두 파일만 커밋
 - `index.html`은 에이전트가 건드리지 않음 (정적)
 - GitHub Pages 활성화 시 브라우저에서 바로 접근 가능
-
-### GitHub 커넥터 인증 (미완료)
-- 트리거 실행 시 `github_repo_access_denied` 오류 발생
-- 해결: https://claude.ai/settings/connectors 에서 GitHub 커넥터 인증 필요
-- 인증 완료 후 트리거 수동 실행으로 누락 리포트 보충 가능
+- GitHub 레포: https://github.com/JungJune-Kim/AI-Daily-Reports
 
 ---
 
@@ -243,11 +289,6 @@ body{font-size:16px}
 `RemoteTrigger` update 액션에서 `job_config` 내 `events[].data.message.content`가 긴 문자열이면 JSON 파싱 실패로 `"body provided as string"` 에러 발생.
 
 **해결책**: content 문자열에 백틱(`` ` ``)이나 중첩 따옴표 최소화, 불릿 기호 대신 `[1] [2]` 형식 사용.
-
-### 트리거 비활성화 주의
-트리거가 `enabled: false`로 꺼진 경우 리포트가 생성되지 않음.  
-확인: `RemoteTrigger {action:"get", trigger_id:"trig_01FwjuEy8a9HLG3H5VzwpEoY"}`  
-복구: `RemoteTrigger {action:"update", trigger_id:"...", body:{enabled:true}}`
 
 ---
 
@@ -265,10 +306,12 @@ body{font-size:16px}
 
 | 날짜 | 내용 |
 |---|---|
+| 2026-04-16 | 로컬 자동화 설정 — crontab + run_daily_report.sh (Claude CLI 방식) |
 | 2026-04-16 | 날짜 네비게이션 바 추가 (← 이전 / 날짜+요일 1줄 / 다음 →) |
 | 2026-04-16 | 전체 폰트 +2px 적용 (CSS 오버라이드 블록 방식) |
 | 2026-04-16 | 카드 소스 링크 텍스트 "Source ↗" → "자세히 보기" 변경 |
 | 2026-04-16 | 2026-04-16 리포트 디자인을 14·15일 버전과 통일 |
+| 2026-04-16 | 2026-04-16 리포트 최초 업로드 |
 
 ---
 
