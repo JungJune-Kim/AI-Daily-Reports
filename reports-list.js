@@ -4,6 +4,19 @@
 
 window.AI_REPORTS = [
   {
+    date: "2026-04-16",
+    file: "2026-04-16_AI_Daily_Report.html",
+    highlights: [
+      "Anthropic 연매출 $300억 돌파, OpenAI 추월",
+      "Microsoft MAI 3종 모델 — 음성·이미지·전사 전영역",
+      "Meta Muse Spark 출시, AI 설비투자 $1,350억 예고",
+      "LG EXAONE 4.5, STEM 벤치마크서 GPT-5-mini 제쳐",
+      "백악관 AI 정책 프레임워크 — 주 규제 연방 선점 권고"
+    ],
+    categories: ["LLM", "VLM", "영상생성", "기업발표", "연구", "정책"],
+    itemCount: 18
+  },
+  {
     date: "2026-04-15",
     file: "2026-04-15_AI_Daily_Report.html",
     highlights: [
