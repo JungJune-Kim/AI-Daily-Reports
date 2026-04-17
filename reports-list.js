@@ -4,6 +4,19 @@
 
 window.AI_REPORTS = [
   {
+    date: "2026-04-17",
+    file: "2026-04-17_AI_Daily_Report.html",
+    highlights: [
+      "Google Veo 4 출시 — 4K·30초·제로샷 아바타 생성",
+      "Claude 4 Opus, SWE-bench 72.1%로 코딩 벤치마크 1위",
+      "Meta Muse Spark — Alexandr Wang 체제 첫 AI 모델 공개",
+      "Tufts 뉴로-심볼릭 VLA, 에너지 100배 절감 로봇 추론",
+      "백악관 AI 프레임워크·RAISE Act 발효로 규제 재편"
+    ],
+    categories: ["LLM", "VLM", "영상생성", "기업발표", "연구", "정책"],
+    itemCount: 18
+  },
+  {
     date: "2026-04-16",
     file: "2026-04-16_AI_Daily_Report.html",
     highlights: [
