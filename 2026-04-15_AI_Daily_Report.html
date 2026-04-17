@@ -512,6 +512,21 @@
   h+=newer?'<a class="nav-btn" href="'+newer.file+'">다음 →</a>':'<span class="nav-btn disabled">다음 →</span>';
   nav.innerHTML=h;
 })();
+// 카드 제목 클릭 → 기사 이동
+document.querySelectorAll('.card').forEach(function(c){
+  var src=c.querySelector('.source-link');
+  var title=c.querySelector('.card-title');
+  if(!src||!title)return;
+  var a=document.createElement('a');
+  a.href=src.href;
+  a.target='_blank';
+  a.style.cssText='color:inherit;text-decoration:none';
+  a.onmouseenter=function(){this.style.textDecoration='underline'};
+  a.onmouseleave=function(){this.style.textDecoration='none'};
+  a.innerHTML=title.innerHTML;
+  title.innerHTML='';
+  title.appendChild(a);
+});
 </script>
 </body>
 </html>
