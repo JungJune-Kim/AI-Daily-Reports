@@ -91,7 +91,7 @@ WebSearch로 최근 24시간 AI 뉴스를 6~8개 쿼리로 검색한다.
 - card-impact: padding-top:10px;border-top:1px solid var(--border) 구조
 - footer: <div class="gen-time">와 <div class="sources"> 클래스 사용 (footer-date·footer-links 사용 금지)
 - <script src="reports-list.js"></script> + 폰트 오버라이드 블록 + nav JS 포함
-- nav JS 다음에 카드 제목 링크 JS 추가 (card-title 텍스트를 source-link URL로 연결):
+- nav JS 다음에 ko-summary 항목 링크 JS(키워드 매칭으로 카드 source-link URL 연결) 추가, 그 다음에 카드 제목 링크 JS 추가 (card-title 텍스트를 source-link URL로 연결):
   document.querySelectorAll('.card').forEach(function(c){var src=c.querySelector('.source-link');var title=c.querySelector('.card-title');if(!src||!title)return;var a=document.createElement('a');a.href=src.href;a.target='_blank';a.style.cssText='color:inherit;text-decoration:none';a.onmouseenter=function(){this.style.textDecoration='underline'};a.onmouseleave=function(){this.style.textDecoration='none'};a.innerHTML=title.innerHTML;title.innerHTML='';title.appendChild(a);});
 
 [5] reports-list.js 업데이트

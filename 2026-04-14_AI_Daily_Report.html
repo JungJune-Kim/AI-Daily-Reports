@@ -618,6 +618,32 @@
   h+=newer?'<a class="nav-btn" href="'+newer.file+'">다음 →</a>':'<span class="nav-btn disabled">다음 →</span>';
   nav.innerHTML=h;
 })();
+// 핵심 뉴스 항목 클릭 → 관련 기사 이동 (키워드 매칭)
+(function(){
+  var items=document.querySelectorAll('.ko-summary li');
+  var cards=document.querySelectorAll('.card');
+  items.forEach(function(li){
+    var liText=li.textContent.toLowerCase();
+    var bestSrc=null,bestScore=0;
+    cards.forEach(function(c){
+      var t=c.querySelector('.card-title');
+      var s=c.querySelector('.source-link');
+      if(!t||!s)return;
+      var words=t.textContent.toLowerCase().split(/[\s·—\-,()]+/);
+      var score=0;
+      words.forEach(function(w){if(w.length>2&&liText.indexOf(w)!==-1)score++;});
+      if(score>bestScore){bestScore=score;bestSrc=s;}
+    });
+    if(!bestSrc||bestScore<1)return;
+    var a=document.createElement('a');
+    a.href=bestSrc.href;a.target='_blank';
+    a.style.cssText='color:inherit;text-decoration:none';
+    a.onmouseenter=function(){this.style.textDecoration='underline'};
+    a.onmouseleave=function(){this.style.textDecoration='none'};
+    a.innerHTML=li.innerHTML;
+    li.innerHTML='';li.appendChild(a);li.style.cursor='pointer';
+  });
+})();
 // 카드 제목 클릭 → 기사 이동
 document.querySelectorAll('.card').forEach(function(c){
   var src=c.querySelector('.source-link');
