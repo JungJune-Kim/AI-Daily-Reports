@@ -6,95 +6,82 @@
   <title>AI Daily Report — 2026-04-17</title>
   <style>
     :root {
-      --bg: #f1f5f9;
-      --surface: #ffffff;
-      --surface2: #f8fafc;
-      --border: #e2e8f0;
-      --text: #0f172a;
-      --muted: #475569;
-      --muted2: #94a3b8;
-      --accent: #6366f1;
-      --cyan: #0891b2;
+      --bg:#f1f5f9; --surface:#ffffff; --surface2:#f8fafc;
+      --border:#e2e8f0; --text:#0f172a; --muted:#475569;
+      --muted2:#94a3b8; --accent:#6366f1; --cyan:#0891b2;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text); font-family: 'Pretendard', 'Noto Sans KR', system-ui, sans-serif; line-height: 1.6; }
-    a { color: inherit; text-decoration: none; }
-
-    /* Header */
-    .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 40px 24px 32px; text-align: center; }
-    .date-chip { display: inline-block; background: #eef2ff; color: var(--accent); border-radius: 999px; padding: 4px 14px; font-weight: 600; margin-bottom: 14px; letter-spacing: .04em; }
-    .header h1 { background: linear-gradient(135deg, #6366f1, #0891b2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 800; letter-spacing: -.02em; margin-bottom: 10px; }
-    .header p { color: var(--muted); }
-
-    /* Container */
-    .container { max-width: 1000px; margin: 0 auto; padding: 32px 24px 64px; }
-
-    /* Ko-summary */
-    .ko-summary { background: linear-gradient(135deg, #eef2ff, #e0e7ff); border: 1px solid #c7d2fe; border-radius: 16px; padding: 22px 24px; margin-bottom: 36px; }
-    .ko-summary h2 { font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; }
-    .ko-summary ol { padding-left: 20px; }
-    .ko-summary li { color: var(--text); font-weight: 500; margin-bottom: 6px; }
-    .ko-summary li:last-child { margin-bottom: 0; }
-
-    /* Section */
-    .section { margin-bottom: 48px; }
-    .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--border); }
-    .section-header h2 { font-weight: 700; color: var(--text); }
-    .section-count { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; font-weight: 600; }
-
-    /* Cards grid */
-    .cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-    @media(max-width:640px) { .cards-grid { grid-template-columns: 1fr; } }
-    .cards-grid .card:first-child { grid-column: 1 / -1; }
-
-    /* Card */
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; transition: box-shadow .2s; }
-    .card:hover { box-shadow: 0 8px 24px rgba(99,102,241,.10); }
-    .card-thumb { width: 100%; height: 180px; overflow: hidden; background: var(--surface2); }
-    .cards-grid .card:first-child .card-thumb { height: 240px; }
-    .card-thumb img { width: 100%; height: 100%; object-fit: cover; }
-    .thumb-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; font-size: 2rem; }
-    .thumb-placeholder span { font-size: 13px; color: var(--muted2); font-weight: 500; }
-    .ph-llm     { background: linear-gradient(135deg, #eef2ff, #e0e7ff); }
-    .ph-vlm     { background: linear-gradient(135deg, #e0f2fe, #bae6fd); }
-    .ph-video   { background: linear-gradient(135deg, #faf5ff, #ede9fe); }
-    .ph-company { background: linear-gradient(135deg, #f0fdf4, #dcfce7); }
-    .ph-research{ background: linear-gradient(135deg, #fdf4ff, #f3e8ff); }
-    .ph-policy  { background: linear-gradient(135deg, #fefce8, #fef9c3); }
-
-    .card-body { padding: 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-    .card-meta { display: flex; gap: 6px; flex-wrap: wrap; }
-    .tag { display: inline-block; border-radius: 6px; padding: 2px 8px; font-weight: 600; }
-    .tag-llm      { background:#eef2ff; color:#4338ca; }
-    .tag-vlm      { background:#e0f2fe; color:#0369a1; }
-    .tag-image    { background:#faf5ff; color:#7c3aed; }
-    .tag-video    { background:#fdf4ff; color:#a21caf; }
-    .tag-openai   { background:#f0fdf4; color:#15803d; }
-    .tag-anthropic{ background:#fff7ed; color:#c2410c; }
-    .tag-google   { background:#eff6ff; color:#1d4ed8; }
-    .tag-meta     { background:#eff6ff; color:#1e40af; }
-    .tag-research { background:#fdf4ff; color:#7e22ce; }
-    .tag-policy   { background:#fefce8; color:#a16207; }
-    .tag-oss      { background:#f0fdf4; color:#166534; }
-    .tag-mistral  { background:#fdf4ff; color:#a21caf; }
-    .tag-microsoft{ background:#eff6ff; color:#1e40af; }
-    .tag-alibaba  { background:#fff7ed; color:#b45309; }
-    .tag-lg       { background:#eff6ff; color:#1e40af; }
-
-    .card-title { font-weight: 700; color: var(--text); line-height: 1.4; }
-    .card-desc { color: var(--muted); line-height: 1.6; }
-    .card-impact { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
-    .impact-label { background: #f1f5f9; color: var(--muted); border-radius: 4px; padding: 1px 7px; font-weight: 600; font-size: .75rem; white-space: nowrap; margin-top: 2px; }
-    .impact-text { color: var(--muted); flex: 1; min-width: 120px; }
-    .source-link { display: inline-flex; align-items: center; gap: 4px; color: var(--accent); font-weight: 600; white-space: nowrap; margin-left: auto; }
-    .source-link:hover { text-decoration: underline; }
-
-    /* Footer */
-    .footer { background: var(--surface); border-top: 1px solid var(--border); padding: 32px 24px; text-align: center; color: var(--muted2); }
-    .footer-date { font-weight: 700; color: var(--muted); margin-bottom: 12px; }
-    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 20px; }
-    .footer-links a { color: var(--accent); font-weight: 500; }
-    .footer-links a:hover { text-decoration: underline; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;font-size:14px;line-height:1.65}
+    a{color:var(--cyan);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .header{background:#ffffff;border-bottom:1px solid var(--border);padding:44px 24px 36px;text-align:center}
+    .date-chip{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 14px;border-radius:999px;margin-bottom:18px}
+    .header h1{font-size:2.1rem;font-weight:800;letter-spacing:-.025em;background:linear-gradient(90deg,#4f46e5 0%,#6366f1 50%,#0891b2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .header p{color:var(--muted2);margin-top:8px;font-size:13px}
+    .container{max-width:1000px;margin:0 auto;padding:36px 24px}
+    .ko-summary{background:#ffffff;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:14px;padding:24px 28px;margin-bottom:40px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+    .ko-summary h2{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.09em;margin-bottom:16px}
+    .ko-summary ul{list-style:none}
+    .ko-summary li{padding:8px 0 8px 20px;position:relative;color:var(--muted);font-size:13.5px;border-bottom:1px solid var(--border)}
+    .ko-summary li:last-child{border-bottom:none}
+    .ko-summary li::before{content:'▶';position:absolute;left:0;top:12px;color:var(--accent);font-size:9px}
+    .ko-summary li strong{color:var(--text)}
+    .section{margin-bottom:52px}
+    .section-header{display:flex;align-items:center;gap:12px;padding-bottom:14px;margin-bottom:22px;border-bottom:1px solid var(--border)}
+    .section-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+    .section-header h2{font-size:1.05rem;font-weight:700;color:var(--text)}
+    .section-count{margin-left:auto;font-size:11px;color:var(--muted2);background:var(--surface2);border:1px solid var(--border);padding:2px 10px;border-radius:999px}
+    .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
+    .cards-grid .card:first-child{grid-column:1/-1}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:border-color .15s,transform .15s,box-shadow .15s}
+    .card:hover{border-color:#a5b4fc;transform:translateY(-3px);box-shadow:0 10px 28px rgba(99,102,241,.12)}
+    .card-thumb{width:100%;height:180px;overflow:hidden;background:var(--surface2);flex-shrink:0}
+    .card:first-child .card-thumb{height:240px}
+    .card-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+    .card:hover .card-thumb img{transform:scale(1.04)}
+    .thumb-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:36px}
+    .thumb-placeholder span{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;opacity:.5}
+    .ph-llm{background:linear-gradient(135deg,#eef2ff,#e0e7ff)}
+    .ph-vlm{background:linear-gradient(135deg,#e0f2fe,#bae6fd)}
+    .ph-video{background:linear-gradient(135deg,#faf5ff,#ede9fe)}
+    .ph-company{background:linear-gradient(135deg,#f0fdf4,#dcfce7)}
+    .ph-research{background:linear-gradient(135deg,#fdf4ff,#f3e8ff)}
+    .ph-policy{background:linear-gradient(135deg,#fefce8,#fef9c3)}
+    .card-body{padding:16px 18px 18px;display:flex;flex-direction:column;flex:1;gap:10px}
+    .card-meta{display:flex;flex-wrap:wrap;gap:6px}
+    .tag{display:inline-flex;align-items:center;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 9px;border-radius:999px}
+    .tag-llm{background:#eef2ff;color:#4338ca}
+    .tag-vlm{background:#e0f2fe;color:#0369a1}
+    .tag-image{background:#faf5ff;color:#7c3aed}
+    .tag-video{background:#fdf4ff;color:#a21caf}
+    .tag-openai{background:#f0fdf4;color:#15803d}
+    .tag-anthropic{background:#fff7ed;color:#c2410c}
+    .tag-google{background:#eff6ff;color:#1d4ed8}
+    .tag-meta{background:#eff6ff;color:#1e40af}
+    .tag-research{background:#fdf4ff;color:#7e22ce}
+    .tag-policy{background:#fefce8;color:#a16207}
+    .tag-oss{background:#f0fdf4;color:#166534}
+    .tag-mistral{background:#fdf4ff;color:#a21caf}
+    .tag-microsoft{background:#eff6ff;color:#1e40af}
+    .tag-alibaba{background:#fff7ed;color:#b45309}
+    .tag-lg{background:#eff6ff;color:#1e40af}
+    .card-title{font-size:15px;font-weight:700;color:var(--text);line-height:1.4}
+    .card-desc{color:var(--muted);font-size:13px;line-height:1.65;flex:1}
+    .card-desc strong{color:var(--text)}
+    .card-impact{display:flex;align-items:flex-start;gap:8px;padding-top:10px;border-top:1px solid var(--border);font-size:12px}
+    .impact-label{color:var(--muted2);font-weight:700;flex-shrink:0}
+    .impact-text{color:var(--muted2);line-height:1.4}
+    .source-link{margin-left:auto;flex-shrink:0;font-size:11px;color:var(--cyan)}
+    .sec-llm .section-icon{background:#eef2ff}
+    .sec-vlm .section-icon{background:#e0f2fe}
+    .sec-video .section-icon{background:#fdf4ff}
+    .sec-company .section-icon{background:#f0fdf4}
+    .sec-research .section-icon{background:#faf5ff}
+    .sec-policy .section-icon{background:#fefce8}
+    .footer{text-align:center;padding:28px 24px;border-top:1px solid var(--border);color:var(--muted2);font-size:12px;background:var(--surface)}
+    .footer .gen-time{margin-top:4px;color:var(--muted2)}
+    .footer .sources{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+    @media(max-width:600px){.header h1{font-size:1.5rem}.container{padding:20px 14px}.cards-grid{grid-template-columns:1fr}}
   </style>
   <script src="reports-list.js"></script>
   <style>
@@ -141,21 +128,22 @@
 
   <!-- 오늘의 핵심 -->
   <div class="ko-summary">
-    <h2>📌 오늘의 핵심</h2>
-    <ol>
-      <li>Google Veo 4 출시 — 4K·30초·제로샷 아바타, 영상 생성 최강자 등극</li>
-      <li>Claude 4 Opus 정식 출시, SWE-bench 72.1%로 코딩 벤치마크 1위</li>
-      <li>Meta Muse Spark 공개 — Alexandr Wang의 첫 번째 AI 모델</li>
-      <li>Tufts 뉴로-심볼릭 VLA, 에너지 100배 절감·로봇 추론 혁신</li>
-      <li>백악관 AI 프레임워크 — 주 규제 금지·RAISE Act 발효 본격화</li>
-    </ol>
+    <h2>🇰🇷 오늘의 핵심 AI 뉴스</h2>
+    <ul>
+      <li><strong>Google Veo 4</strong> 출시 — 4K·30초·제로샷 아바타, 영상 생성 최강자 등극</li>
+      <li><strong>Claude 4 Opus</strong> 정식 출시, SWE-bench 72.1%로 코딩 벤치마크 1위</li>
+      <li><strong>Meta Muse Spark</strong> 공개 — Alexandr Wang의 첫 번째 AI 모델</li>
+      <li><strong>Tufts 뉴로-심볼릭 VLA</strong>, 에너지 100배 절감·로봇 추론 혁신</li>
+      <li><strong>백악관 AI 프레임워크</strong> — 주 규제 금지·RAISE Act 발효 본격화</li>
+    </ul>
   </div>
 
   <!-- ========== LLM 업데이트 ========== -->
-  <div class="section">
+  <div class="section sec-llm">
     <div class="section-header">
-      <h2>🧠 LLM 업데이트</h2>
-      <span class="section-count">3건</span>
+      <div class="section-icon">🧠</div>
+      <h2>LLM 업데이트</h2>
+      <span class="section-count">3 items</span>
     </div>
     <div class="cards-grid">
 
@@ -223,10 +211,11 @@
   </div>
 
   <!-- ========== VLM & 멀티모달 ========== -->
-  <div class="section">
+  <div class="section sec-vlm">
     <div class="section-header">
-      <h2>👁️ VLM & 멀티모달</h2>
-      <span class="section-count">3건</span>
+      <div class="section-icon">👁️</div>
+      <h2>VLM &amp; 멀티모달</h2>
+      <span class="section-count">3 items</span>
     </div>
     <div class="cards-grid">
 
@@ -295,10 +284,11 @@
   </div>
 
   <!-- ========== 이미지/영상 생성 ========== -->
-  <div class="section">
+  <div class="section sec-video">
     <div class="section-header">
-      <h2>🎬 이미지 · 영상 생성</h2>
-      <span class="section-count">3건</span>
+      <div class="section-icon">🎨</div>
+      <h2>이미지 / 영상 생성 AI</h2>
+      <span class="section-count">3 items</span>
     </div>
     <div class="cards-grid">
 
@@ -366,10 +356,11 @@
   </div>
 
   <!-- ========== 기업 발표 ========== -->
-  <div class="section">
+  <div class="section sec-company">
     <div class="section-header">
-      <h2>🏢 기업 발표</h2>
-      <span class="section-count">3건</span>
+      <div class="section-icon">🏢</div>
+      <h2>주요 기업 발표</h2>
+      <span class="section-count">3 items</span>
     </div>
     <div class="cards-grid">
 
@@ -437,10 +428,11 @@
   </div>
 
   <!-- ========== 연구 하이라이트 ========== -->
-  <div class="section">
+  <div class="section sec-research">
     <div class="section-header">
-      <h2>🔬 연구 하이라이트</h2>
-      <span class="section-count">3건</span>
+      <div class="section-icon">🔬</div>
+      <h2>연구 하이라이트</h2>
+      <span class="section-count">3 items</span>
     </div>
     <div class="cards-grid">
 
@@ -509,10 +501,11 @@
   </div>
 
   <!-- ========== 정책 & 규제 ========== -->
-  <div class="section">
+  <div class="section sec-policy">
     <div class="section-header">
-      <h2>⚖️ 정책 &amp; 규제</h2>
-      <span class="section-count">3건</span>
+      <div class="section-icon">⚖️</div>
+      <h2>정책 &amp; 규제</h2>
+      <span class="section-count">3 items</span>
     </div>
     <div class="cards-grid">
 
@@ -582,20 +575,21 @@
 </div><!-- /container -->
 
 <div class="footer">
-  <div class="footer-date">AI Daily Trends Report — 2026년 4월 17일 금요일</div>
-  <div class="footer-links">
+  <div><strong>AI Daily Trends Report</strong> — 2026년 4월 17일 (금요일)</div>
+  <div class="gen-time">Generated: 2026-04-17 · Powered by Claude Sonnet 4.6 + Web Search</div>
+  <div class="sources">
     <a href="https://llm-stats.com/llm-updates" target="_blank">LLM Stats</a>
-    <a href="https://www.koreaherald.com/article/10714004" target="_blank">Korea Herald · EXAONE 4.5</a>
-    <a href="https://www.marktechpost.com/2026/04/01/z-ai-launches-glm-5v-turbo-a-native-multimodal-vision-coding-model-optimized-for-openclaw-and-high-capacity-agentic-engineering-workflows-everywhere/" target="_blank">MarkTechPost · GLM-5V-Turbo</a>
-    <a href="https://www.veo3ai.io/blog/veo-4-release-everything-you-need-to-know-2026" target="_blank">Veo 4 Release</a>
+    <a href="https://www.koreaherald.com/article/10714004" target="_blank">Korea Herald</a>
+    <a href="https://www.marktechpost.com/2026/04/01/z-ai-launches-glm-5v-turbo-a-native-multimodal-vision-coding-model-optimized-for-openclaw-and-high-capacity-agentic-engineering-workflows-everywhere/" target="_blank">MarkTechPost</a>
+    <a href="https://www.veo3ai.io/blog/veo-4-release-everything-you-need-to-know-2026" target="_blank">Veo3AI</a>
     <a href="https://www.cnbc.com/2026/04/10/alibaba-happyhorse-ai-video-model-benchmark-reveal.html" target="_blank">CNBC · HappyHorse</a>
-    <a href="https://venturebeat.com/technology/microsoft-launches-3-new-ai-models-in-direct-shot-at-openai-and-google" target="_blank">VentureBeat · Microsoft MAI</a>
-    <a href="https://www.cnbc.com/2026/04/08/meta-debuts-first-major-ai-model-since-14-billion-deal-to-bring-in-alexandr-wang.html" target="_blank">CNBC · Meta Muse Spark</a>
-    <a href="https://www.sciencedaily.com/releases/2026/04/260405003952.htm" target="_blank">ScienceDaily · Neuro-Symbolic VLA</a>
-    <a href="https://www.nextbigfuture.com/2026/04/2026-is-breakthrough-year-for-reliable-ai-world-models-and-continual-learning-prototypes.html" target="_blank">NextBigFuture · World Models</a>
-    <a href="https://www.lawfaremedia.org/article/white-house-ai-framework-proposes-industry-friendly-legislation" target="_blank">Lawfare · AI Framework</a>
-    <a href="https://www.alston.com/en/insights/publications/2026/04/ai-quarterly-april-2026" target="_blank">Alston · RAISE Act</a>
-    <a href="https://www.jdsupra.com/legalnews/ai-legal-watch-april-2026-4174658/" target="_blank">JDSupra · State AI Laws</a>
+    <a href="https://venturebeat.com/technology/microsoft-launches-3-new-ai-models-in-direct-shot-at-openai-and-google" target="_blank">VentureBeat</a>
+    <a href="https://www.cnbc.com/2026/04/08/meta-debuts-first-major-ai-model-since-14-billion-deal-to-bring-in-alexandr-wang.html" target="_blank">CNBC · Meta</a>
+    <a href="https://www.sciencedaily.com/releases/2026/04/260405003952.htm" target="_blank">ScienceDaily</a>
+    <a href="https://www.nextbigfuture.com/2026/04/2026-is-breakthrough-year-for-reliable-ai-world-models-and-continual-learning-prototypes.html" target="_blank">NextBigFuture</a>
+    <a href="https://www.lawfaremedia.org/article/white-house-ai-framework-proposes-industry-friendly-legislation" target="_blank">Lawfare</a>
+    <a href="https://www.alston.com/en/insights/publications/2026/04/ai-quarterly-april-2026" target="_blank">Alston</a>
+    <a href="https://www.jdsupra.com/legalnews/ai-legal-watch-april-2026-4174658/" target="_blank">JDSupra</a>
   </div>
 </div>
 

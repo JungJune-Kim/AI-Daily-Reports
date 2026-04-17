@@ -75,16 +75,22 @@ WebSearch로 최근 24시간 AI 뉴스를 6~8개 쿼리로 검색한다.
 각 기사 URL에 WebFetch로 og:image URL을 수집한다. 실패(403·없음)시 null로 처리하고 thumb-placeholder를 사용한다.
 
 [4] 리포트 HTML 생성
-handoff.md의 디자인 스펙을 정확히 따른다:
-- 파일명: YYYY-MM-DD_AI_Daily_Report.html
-- 헤더: date-chip + 그라디언트 h1 + 부제목
-- 날짜 네비게이션 바 (reports-list.js 로드 + nav JS 포함)
-- ko-summary 박스 (오늘의 핵심 5개)
-- 섹션: LLM / VLM / 이미지·영상생성 / 기업발표 / 연구 / 정책
-- 카드: card-thumb + card-body (card-meta + card-title + card-desc + card-impact)
-- 소스 링크 텍스트: '자세히 보기'
-- 폰트 오버라이드 블록 포함 (+2px)
-- 푸터: 날짜 + 소스 링크 목록
+반드시 2026-04-16_AI_Daily_Report.html 파일의 CSS와 HTML 구조를 그대로 복사해서 사용한다. 날짜·콘텐츠만 교체한다.
+절대 임의로 CSS를 변경하거나 다른 디자인을 적용하지 않는다.
+
+필수 준수 항목 (2026-04-16 파일에서 그대로 복사):
+- <style> 첫 번째 블록: :root 변수부터 @media 쿼리까지 동일하게
+- font-family: -apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif (Pretendard 사용 금지)
+- date-chip: background:var(--accent);color:#fff (연보라 배경 사용 금지)
+- h1 gradient: linear-gradient(90deg,#4f46e5 0%,#6366f1 50%,#0891b2 100%) (135deg 사용 금지)
+- ko-summary: 흰 배경 + border-left:4px solid var(--accent) + <ul> + ▶ bullet (gradient 배경·<ol> 사용 금지)
+- section: class="section sec-llm" 등 sec-XXX 클래스 필수, section-header 안에 <div class="section-icon"> 필수
+- cards-grid: repeat(auto-fill,minmax(290px,1fr)) (repeat(2,1fr) 사용 금지)
+- card:hover: transform:translateY(-3px) 포함
+- tag: border-radius:999px (6px 사용 금지)
+- card-impact: padding-top:10px;border-top:1px solid var(--border) 구조
+- footer: <div class="gen-time">와 <div class="sources"> 클래스 사용 (footer-date·footer-links 사용 금지)
+- <script src="reports-list.js"></script> + 폰트 오버라이드 블록 + nav JS 포함
 
 [5] reports-list.js 업데이트
 파일을 읽은 후 오늘 항목을 맨 앞에 추가(기존 항목 절대 삭제 금지).
