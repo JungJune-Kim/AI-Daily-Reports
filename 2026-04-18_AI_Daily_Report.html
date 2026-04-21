@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Daily Report — 2026-04-18</title>
+  <style>
+    :root {
+      --bg:#f1f5f9; --surface:#ffffff; --surface2:#f8fafc;
+      --border:#e2e8f0; --text:#0f172a; --muted:#475569;
+      --muted2:#94a3b8; --accent:#6366f1; --cyan:#0891b2;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;font-size:14px;line-height:1.65}
+    a{color:var(--cyan);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .header{background:#ffffff;border-bottom:1px solid var(--border);padding:44px 24px 36px;text-align:center}
+    .date-chip{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 14px;border-radius:999px;margin-bottom:18px}
+    .header h1{font-size:2.1rem;font-weight:800;letter-spacing:-.025em;background:linear-gradient(90deg,#4f46e5 0%,#6366f1 50%,#0891b2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .header p{color:var(--muted2);margin-top:8px;font-size:13px}
+    .container{max-width:1000px;margin:0 auto;padding:36px 24px}
+    .ko-summary{background:#ffffff;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:14px;padding:24px 28px;margin-bottom:40px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+    .ko-summary h2{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.09em;margin-bottom:16px}
+    .ko-summary ul{list-style:none}
+    .ko-summary li{padding:8px 0 8px 20px;position:relative;color:var(--muted);font-size:13.5px;border-bottom:1px solid var(--border)}
+    .ko-summary li:last-child{border-bottom:none}
+    .ko-summary li::before{content:'▶';position:absolute;left:0;top:12px;color:var(--accent);font-size:9px}
+    .ko-summary li strong{color:var(--text)}
+    .section{margin-bottom:52px}
+    .section-header{display:flex;align-items:center;gap:12px;padding-bottom:14px;margin-bottom:22px;border-bottom:1px solid var(--border)}
+    .section-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+    .section-header h2{font-size:1.05rem;font-weight:700;color:var(--text)}
+    .section-count{margin-left:auto;font-size:11px;color:var(--muted2);background:var(--surface2);border:1px solid var(--border);padding:2px 10px;border-radius:999px}
+    .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
+    .cards-grid .card:first-child{grid-column:1/-1}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:border-color .15s,transform .15s,box-shadow .15s}
+    .card:hover{border-color:#a5b4fc;transform:translateY(-3px);box-shadow:0 10px 28px rgba(99,102,241,.12)}
+    .card-thumb{width:100%;height:180px;overflow:hidden;background:var(--surface2);flex-shrink:0}
+    .card:first-child .card-thumb{height:240px}
+    .card-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+    .card:hover .card-thumb img{transform:scale(1.04)}
+    .thumb-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:36px}
+    .thumb-placeholder span{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;opacity:.5}
+    .ph-llm{background:linear-gradient(135deg,#eef2ff,#e0e7ff)}
+    .ph-vlm{background:linear-gradient(135deg,#e0f2fe,#bae6fd)}
+    .ph-video{background:linear-gradient(135deg,#faf5ff,#ede9fe)}
+    .ph-company{background:linear-gradient(135deg,#f0fdf4,#dcfce7)}
+    .ph-research{background:linear-gradient(135deg,#fdf4ff,#f3e8ff)}
+    .ph-policy{background:linear-gradient(135deg,#fefce8,#fef9c3)}
+    .card-body{padding:16px 18px 18px;display:flex;flex-direction:column;flex:1;gap:10px}
+    .card-meta{display:flex;flex-wrap:wrap;gap:6px}
+    .tag{display:inline-flex;align-items:center;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 9px;border-radius:999px}
+    .tag-llm{background:#eef2ff;color:#4338ca}
+    .tag-vlm{background:#e0f2fe;color:#0369a1}
+    .tag-image{background:#faf5ff;color:#7c3aed}
+    .tag-video{background:#fdf4ff;color:#a21caf}
+    .tag-openai{background:#f0fdf4;color:#15803d}
+    .tag-anthropic{background:#fff7ed;color:#c2410c}
+    .tag-google{background:#eff6ff;color:#1d4ed8}
+    .tag-meta{background:#eff6ff;color:#1e40af}
+    .tag-research{background:#fdf4ff;color:#7e22ce}
+    .tag-policy{background:#fefce8;color:#a16207}
+    .tag-oss{background:#f0fdf4;color:#166534}
+    .tag-mistral{background:#fdf4ff;color:#a21caf}
+    .tag-microsoft{background:#eff6ff;color:#1e40af}
+    .tag-alibaba{background:#fff7ed;color:#b45309}
+    .tag-xai{background:#f1f5f9;color:#334155}
+    .card-title{font-size:15px;font-weight:700;color:var(--text);line-height:1.4}
+    .card-desc{color:var(--muted);font-size:13px;line-height:1.65;flex:1}
+    .card-desc strong{color:var(--text)}
+    .card-impact{display:flex;align-items:flex-start;gap:8px;padding-top:10px;border-top:1px solid var(--border);font-size:12px}
+    .impact-label{color:var(--muted2);font-weight:700;flex-shrink:0}
+    .impact-text{color:var(--muted2);line-height:1.4}
+    .source-link{margin-left:auto;flex-shrink:0;font-size:11px;color:var(--cyan)}
+    .sec-llm .section-icon{background:#eef2ff}
+    .sec-vlm .section-icon{background:#e0f2fe}
+    .sec-video .section-icon{background:#fdf4ff}
+    .sec-company .section-icon{background:#f0fdf4}
+    .sec-research .section-icon{background:#faf5ff}
+    .sec-policy .section-icon{background:#fefce8}
+    .footer{text-align:center;padding:28px 24px;border-top:1px solid var(--border);color:var(--muted2);font-size:12px;background:var(--surface)}
+    .footer .gen-time{margin-top:4px;color:var(--muted2)}
+    .footer .sources{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+    @media(max-width:600px){.header h1{font-size:1.5rem}.container{padding:20px 14px}.cards-grid{grid-template-columns:1fr}}
+  </style>
+  <script src="reports-list.js"></script>
+  <style>
+    /* ── Font size overrides (+2px) ── */
+    body{font-size:16px}
+    .date-chip{font-size:13px}
+    .header h1{font-size:2.25rem}
+    .header p{font-size:15px}
+    .ko-summary h2{font-size:13px}
+    .ko-summary li{font-size:15.5px}
+    .section-count{font-size:13px}
+    .section-header h2{font-size:1.175rem}
+    .tag{font-size:12px}
+    .card-title{font-size:17px}
+    .card-desc{font-size:15px}
+    .card-impact{font-size:14px}
+    .source-link{font-size:13px}
+    .thumb-placeholder span{font-size:13px}
+    .footer{font-size:14px}
+    @media(max-width:600px){.header h1{font-size:1.625rem}}
+    /* ── Report navigation ── */
+    .nav-bar{background:var(--surface);border-bottom:1px solid var(--border)}
+    .nav-inner{max-width:1000px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .nav-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--accent);padding:7px 16px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);transition:background .15s,border-color .15s;white-space:nowrap}
+    .nav-btn:hover{background:#eef2ff;border-color:#a5b4fc;text-decoration:none}
+    .nav-btn.disabled{color:var(--muted2);cursor:default;pointer-events:none}
+    .nav-current{font-size:13px;font-weight:700;color:var(--text);text-align:center}
+    .nav-current small{display:block;font-size:11px;font-weight:400;color:var(--muted2);margin-top:2px}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="date-chip">2026 · 04 · 18 · Saturday</div>
+  <h1>AI Daily Trends Report</h1>
+  <p>LLM &nbsp;·&nbsp; VLM &nbsp;·&nbsp; Image / Video Gen &nbsp;·&nbsp; Company News &nbsp;·&nbsp; Research &nbsp;·&nbsp; Policy</p>
+</div>
+
+<div class="nav-bar">
+  <div class="nav-inner" id="report-nav">
+    <span class="nav-btn disabled">← 이전</span>
+    <span class="nav-current">로딩 중…</span>
+    <span class="nav-btn disabled">다음 →</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="ko-summary">
+    <h2>🇰🇷 오늘의 핵심 AI 뉴스</h2>
+    <ul>
+      <li>Anthropic, <strong>Claude Design</strong> 출시 — 대화형 시각 자산 생성 도구, Figma·Canva 시장 도전</li>
+      <li>xAI <strong>Grok 4.3 Beta</strong> 공개 — 파라미터 1조 개(Grok 4.20 대비 2배), SuperGrok Heavy 구독자 우선 배포</li>
+      <li>DeepSeek, 창립 후 <strong>첫 외부 투자 유치</strong> 추진 — $3억 모집, 기업가치 $100억 이상 목표</li>
+      <li>Cloudflare, AI 에이전트 전용 <strong>Agent Memory</strong> 비공개 베타 출시 — 컨텍스트 외부 대화 메모리 관리</li>
+      <li>OpenAI, <strong>IPO 소매 투자자 배정</strong> 확인 — CFO Sarah Friar, 4분기 상장 준비 본격화 공식 발표</li>
+    </ul>
+  </div>
+
+  <!-- ── LLM ── -->
+  <div class="section sec-llm">
+    <div class="section-header">
+      <div class="section-icon">🧠</div>
+      <h2>LLM 업데이트</h2>
+      <span class="section-count">3 items</span>
+    </div>
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-llm">⚡<span>xAI Grok</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-xai">xAI</span><span class="tag tag-llm">LLM</span></div>
+          <div class="card-title">xAI Grok 4.3 Beta 출시 — 파라미터 1조 개, 네이티브 멀티모달 비디오 이해</div>
+          <div class="card-desc">xAI가 4월 18일 <strong>Grok 4.3 Beta</strong>를 SuperGrok Heavy 구독자에게 공개했다. 파라미터 수가 Grok 4.20 대비 두 배인 1조 개에 달하며, 네이티브 멀티모달 비디오 이해 능력과 향상된 장문 컨텍스트 처리 기능을 탑재했다. 복잡한 분석 작업에서 이전 버전 대비 뚜렷한 성능 개선을 보였다는 초기 평가가 잇따르고 있다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">트릴리언 파라미터 모델 시대 본격화. 비디오 멀티모달 이해가 LLM의 새 기준으로 부상.</span>
+            <a class="source-link" href="https://www.theaiconsultingnetwork.com/blog/xai-grok-4-3-beta-ai-model-cre-investors-2026" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-llm">🤖<span>GLM Open Source</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-llm">LLM</span><span class="tag tag-oss">Open Source</span></div>
+          <div class="card-title">Zhipu AI GLM-5.1 공개 — SWE-Bench Pro 1위, MIT 라이선스로 전면 개방</div>
+          <div class="card-desc">중국 Zhipu AI가 <strong>GLM-5.1</strong>을 MIT 라이선스로 공개했다. 7,440억 파라미터 규모의 Mixture-of-Experts 모델로, 포워드 패스당 400억 파라미터가 활성화된다. 200K 컨텍스트 윈도우를 지원하며, SWE-Bench Pro에서 Claude Opus 4.6과 GPT-5.4를 모두 제치고 1위에 오르며 주목받고 있다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">MIT 라이선스 최강 코딩 모델 탄생. 오픈소스 진영이 독점 모델과 코딩 성능 격차를 사실상 해소.</span>
+            <a class="source-link" href="https://whatllm.org/blog/new-ai-models-april-2026" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-llm">🔒<span>Cyber AI</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-anthropic">Anthropic</span><span class="tag tag-openai">OpenAI</span><span class="tag tag-llm">사이버보안</span></div>
+          <div class="card-title">OpenAI·Anthropic, 제한 공개 사이버 AI 모델 경쟁 — "너무 위험해서 일반 배포 불가"</div>
+          <div class="card-desc">OpenAI와 Anthropic이 각각 일주일 간격으로 사이버보안 전용 제한 AI 모델을 출시했다. Anthropic의 <strong>Claude Mythos</strong>는 CyberGym 벤치마크 83.1%를 기록하며 실제 소프트웨어 취약점을 자율 발견하는 능력을 갖췄으나, 50개 기업 파이어월 뒤에 잠겼다. 두 회사 모두 "공개하기엔 너무 강력하다"는 결론에 독립적으로 도달했다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">제한 공개 방어 AI 카테고리의 탄생. 사이버 AI 거버넌스의 새 선례 — 능력 vs 안전의 균형점 논쟁 시작.</span>
+            <a class="source-link" href="https://beforethecurve.medium.com/openai-and-anthropic-both-released-restricted-cyber-ai-models-in-7-days-heres-what-it-means-8084a8f13853" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── VLM ── -->
+  <div class="section sec-vlm">
+    <div class="section-header">
+      <div class="section-icon">👁️</div>
+      <h2>VLM &amp; 멀티모달</h2>
+      <span class="section-count">3 items</span>
+    </div>
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-vlm">🌐<span>Gemma 4</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-google">Google</span><span class="tag tag-vlm">VLM</span><span class="tag tag-oss">Apache 2.0</span></div>
+          <div class="card-title">Google Gemma 4 — 256K 컨텍스트·140개 언어·단일 H100 구동, 오픈소스 VLM 새 기준</div>
+          <div class="card-desc">Google DeepMind가 4월 2일 공개한 <strong>Gemma 4</strong>가 4월 18일 주간 가장 주목받는 오픈 모델로 재조명받고 있다. Apache 2.0 라이선스 아래 4가지 크기 모델을 배포했으며, 256K 토큰 컨텍스트·네이티브 비전·오디오 처리·140개 언어 지원을 갖췄다. 31B 모델이 글로벌 Arena 리더보드 3위에 오르며 단일 80GB H100에서 구동 가능하다는 점이 돋보인다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">완전 상업 허용 오픈 VLM으로 기업 내재화 장벽 해소. 스마트폰부터 데이터센터까지 전 규모 배포 가능.</span>
+            <a class="source-link" href="https://blog.google/innovation-and-ai/technology/developers-tools/gemma-4/" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-vlm">🤖<span>AI Agents</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-vlm">멀티모달</span><span class="tag tag-research">에이전트</span></div>
+          <div class="card-title">AI 에이전트, 실제 컴퓨터 작업 성공률 12% → 66% 도달 — 인간 수준 근접</div>
+          <div class="card-desc">최신 연구에서 AI 에이전트의 실제 컴퓨터 태스크 성공률이 인간의 <strong>66% 수준</strong>으로 도약했다. 2024년 12%에 불과했던 수치가 불과 1~2년 만에 급등한 것이다. 에이전트는 소프트웨어 내비게이션·시스템 조작을 거의 사람처럼 수행할 수 있어 프로덕션 투입이 현실화되고 있다는 평가다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">에이전트 기반 자동화 상용화 임박. 소프트웨어 RPA·QA·고객 지원 등 다양한 업무 자동화 가속.</span>
+            <a class="source-link" href="https://aiagentstore.ai/ai-agent-news/this-week" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-vlm">☁️<span>Cloudflare</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-llm">에이전트 인프라</span><span class="tag tag-research">메모리</span></div>
+          <div class="card-title">Cloudflare Agent Memory 비공개 베타 — 컨텍스트 외부 대화 메모리 관리 서비스</div>
+          <div class="card-desc">Cloudflare가 4월 18일 <strong>Agent Memory</strong> 비공개 베타를 발표했다. 대화 데이터를 에이전트의 컨텍스트 윈도우 밖에서 추출·저장·검색하는 관리형 서비스다. 컨텍스트 한계를 극복하고 세션 간 지속적 메모리를 제공해 장기 실행 에이전트 워크플로우를 지원한다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">에이전트 장기 기억 문제 해소. 고객 관계 관리·개인화 AI 서비스 구현 비용 대폭 절감.</span>
+            <a class="source-link" href="https://www.cryptointegrat.com/p/ai-news-april-18-2026" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Video Gen ── -->
+  <div class="section sec-video">
+    <div class="section-header">
+      <div class="section-icon">🎨</div>
+      <h2>이미지 / 영상 생성 AI</h2>
+      <span class="section-count">3 items</span>
+    </div>
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-video">🎬<span>Sora Shutdown</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-openai">OpenAI</span><span class="tag tag-video">Video</span></div>
+          <div class="card-title">OpenAI Sora, 3월 24일 서비스 종료 — 누적 매출 $210만 vs 하루 운영비 $1,500만</div>
+          <div class="card-desc">OpenAI가 3월 24일 <strong>Sora</strong> 영상 생성 서비스를 공식 종료했다. 생애 누적 매출 $210만에 불과했으나 추론 비용은 하루 $1,500만에 달해 경제성이 없었던 것으로 알려졌다. 영상 AI 시장에서 OpenAI가 철수함에 따라 Google Veo 4, Alibaba HappyHorse-1.0, Seedance 2.0이 수혜를 받을 전망이다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">영상 AI 비용 구조 현실화 경고. 고품질 모델도 운영 비용 미충당 시 지속 불가 — 수익 모델 재검토 필요.</span>
+            <a class="source-link" href="https://autogpt.net/state-of-ai-video/" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-video">🐴<span>HappyHorse · Kling</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-alibaba">Alibaba</span><span class="tag tag-video">Video</span></div>
+          <div class="card-title">HappyHorse-1.0, 4월 영상 AI 리더보드 압도 — 2위와 74 Elo 격차, 역대 최대</div>
+          <div class="card-desc">Alibaba ATH AI의 <strong>HappyHorse-1.0</strong>이 Artificial Analysis 비디오 아레나 T2V·I2V 양 부문 1위를 유지하며 4월 영상 AI 판도를 지배하고 있다. 2위 Seedance 2.0과의 격차가 74 Elo 포인트로 리더보드 역사상 가장 큰 격차를 기록했다. Kling 3.0, Google Veo 3.1이 그 뒤를 잇고 있다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">중국 AI 영상 모델의 기술 우위 공고화. 서방 기업들의 영상 AI 전략 재조정 불가피.</span>
+            <a class="source-link" href="https://autogpt.net/state-of-ai-video/" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-video">🛡️<span>Deepfake Law</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-xai">xAI</span><span class="tag tag-policy">규제</span><span class="tag tag-video">딥페이크</span></div>
+          <div class="card-title">캘리포니아 AG, xAI에 Grok 딥페이크 중단 공식 요구 — App Store 퇴출 경고도</div>
+          <div class="card-desc">캘리포니아 법무장관 Rob Bonta가 xAI에 Grok AI 모델의 비동의 딥페이크 콘텐츠 생성을 즉시 중단하라는 공식 서한을 발송했다. Apple도 xAI에 Grok이 App Store 정책 위반 시 삭제될 수 있다고 비공식 경고한 것으로 전해졌다. 프랑스 검찰도 4월 18일 딥페이크 및 학대 콘텐츠 관련 조사를 강화하고 있다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">생성 AI 콘텐츠 안전 규제 압박 전방위 확산. 플랫폼 삭제 위협이 AI 기업의 가장 빠른 규제 수단으로 부상.</span>
+            <a class="source-link" href="https://jackrighteous.com/blogs/ai-art-visuals-creatives/grok-ai-image-video-generation-2026" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Company ── -->
+  <div class="section sec-company">
+    <div class="section-header">
+      <div class="section-icon">🏢</div>
+      <h2>주요 기업 발표</h2>
+      <span class="section-count">3 items</span>
+    </div>
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-company">🎨<span>Anthropic Design</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-anthropic">Anthropic</span><span class="tag tag-llm">Claude</span></div>
+          <div class="card-title">Anthropic Claude Design 공식 출시 — 대화형 프로토타입·슬라이드·목업 생성, Figma·Canva에 도전</div>
+          <div class="card-desc">Anthropic이 4월 18일 <strong>Claude Design</strong>을 공식 출시했다. Claude Opus 4.7 기반의 시각 자산 생성 도구로, 텍스트 대화만으로 프로토타입·피치덱·랜딩 페이지·소셜 미디어 자산을 만들 수 있다. Pro·Max·Team·Enterprise 구독자에게 리서치 프리뷰로 제공되며, 팀 코드베이스·디자인 파일 접근 시 브랜드 일관성을 자동 유지한다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">비디자이너의 시각 콘텐츠 제작 민주화. Figma·Canva의 주요 고객층인 PM·마케터 시장 직접 공략.</span>
+            <a class="source-link" href="https://techcrunch.com/2026/04/17/anthropic-launches-claude-design-a-new-product-for-creating-quick-visuals/" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-company">💰<span>DeepSeek Funding</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-llm">DeepSeek</span><span class="tag tag-policy">투자</span></div>
+          <div class="card-title">DeepSeek, 창립 첫 외부 투자 유치 — $3억·기업가치 $100억+ 목표, a16z·Thrive 참여</div>
+          <div class="card-desc">중국 AI 스타트업 <strong>DeepSeek</strong>이 모회사 High-Flyer Capital Management 외 첫 외부 자본 $3억 유치에 나섰다. 기업가치 $100억 이상을 목표로 하며, Thrive Capital·Andreessen Horowitz·Battery Ventures·Nvidia가 참여를 검토 중이다. 차세대 플래그십 V4 모델 출시를 앞두고 추론 비용 급증에 대응하기 위한 결정이다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">중국 AI 스타트업 최초 서방 VC 유치. DeepSeek의 글로벌 확장 신호 — V4 모델 성능 기대감 고조.</span>
+            <a class="source-link" href="https://techstartups.com/2026/04/17/deepseek-seeks-300m-in-first-fundraise-at-10b-valuation-as-ai-costs-surge/" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-company">📈<span>OpenAI IPO</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-openai">OpenAI</span><span class="tag tag-policy">IPO</span></div>
+          <div class="card-title">OpenAI CFO, IPO 소매 투자자 배정 공식 확인 — 2026년 4분기 상장 준비 본격화</div>
+          <div class="card-desc">OpenAI CFO Sarah Friar가 <strong>IPO 일정을 2026년 4분기</strong>로 공식 언급하며 소매 투자자에게 공모주 일부를 배정할 계획을 확인했다. 연환산 매출은 2025년 말 $200억 돌파 후 현재 약 $250억 수준이며, 기업 고객 매출이 전체의 40%를 차지하고 연말 50% 목표다. 목표 기업가치는 약 $1조로 알려졌다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">AI 산업 역사상 최대 IPO 가시화. 소매 투자자 참여로 AI 주식 시장 접근성 대폭 확대.</span>
+            <a class="source-link" href="https://www.cnbc.com/2026/04/08/openai-ipo-sarah-friar-retail-investors.html" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Research ── -->
+  <div class="section sec-research">
+    <div class="section-header">
+      <div class="section-icon">🔬</div>
+      <h2>연구 하이라이트</h2>
+      <span class="section-count">3 items</span>
+    </div>
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-research">🧬<span>Bio Neuro AI</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-research">Research</span><span class="tag tag-llm">뇌-AI 인터페이스</span></div>
+          <div class="card-title">노스웨스턴대 3D 프린팅 인공 뉴런, 실제 뇌 뉴런과 신호 교환 성공</div>
+          <div class="card-desc">노스웨스턴 대학교 연구팀이 <strong>3D 프린팅 인공 뉴런</strong>을 제작해 실제 뇌 뉴런과 전기 신호를 주고받는 데 성공했다. 이 기술은 신경 손상 치료·BCI(뇌-컴퓨터 인터페이스) 발전에 핵심 돌파구가 될 수 있으며, AI와 생물학적 신경계의 직접 통합 가능성을 제시했다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">AI-뇌 융합 연구의 현실화. 파킨슨·척수 손상 치료 및 차세대 BCI 기기 개발 가속 전망.</span>
+            <a class="source-link" href="https://www.crescendo.ai/news/latest-ai-news-and-updates" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-research">📊<span>Stanford AI Index</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-research">Research</span><span class="tag tag-policy">리포트</span></div>
+          <div class="card-title">Stanford HAI AI Index 2026 — 미-중 AI 격차 2.7%로 붕괴, 중국 특허 69.7% 독점</div>
+          <div class="card-desc">Stanford HAI가 발표한 <strong>2026 AI Index Report</strong>는 미국과 중국 AI 모델 간 성능 격차가 2023년 17~32% 포인트에서 현재 2.7%로 붕괴됐다고 밝혔다. 중국은 AI 특허의 69.7%, 논문의 23.2%를 점유하며 미국의 23배 적은 투자($124억 vs $2,859억)로 이 성과를 달성했다. 미국으로의 AI 학자 이동은 2017년 대비 89% 감소했다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">미국 AI 헤게모니 위협 현실화. 인재 이탈과 특허 격차가 장기 경쟁력에 미치는 영향 정책 대응 시급.</span>
+            <a class="source-link" href="https://thenextweb.com/news/stanford-ai-index-2026-china-us-performance-gap" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-research">📋<span>NotebookLM</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-google">Google</span><span class="tag tag-research">도구</span></div>
+          <div class="card-title">Google NotebookLM, 커스텀 커버 아트 및 설명 기능 추가 — 공유·협업 개선</div>
+          <div class="card-desc">Google이 <strong>NotebookLM</strong>에 노트북별 커버 아트 커스터마이징 및 설명 추가 기능을 업데이트했다. 개인화·공유 목적의 기능으로, 기업·교육 현장에서 멀티 노트북 관리 시 가시성을 높인다. NotebookLM은 AI 연구 보조 도구 시장에서 급속히 확산되며 주간 업데이트 주기를 유지하고 있다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">지식 관리 도구로서 NotebookLM의 기업 도입 가속. 연구·교육 생산성 AI 플랫폼 경쟁 심화.</span>
+            <a class="source-link" href="https://www.cryptointegrat.com/p/ai-news-april-18-2026" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Policy ── -->
+  <div class="section sec-policy">
+    <div class="section-header">
+      <div class="section-icon">⚖️</div>
+      <h2>정책 &amp; 규제</h2>
+      <span class="section-count">3 items</span>
+    </div>
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-policy">🏛️<span>AI Safety</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-policy">Policy</span><span class="tag tag-research">안전</span></div>
+          <div class="card-title">Stanford AI Index 2026 경고 — AI 안전 벤치마크 역량 따라가기 실패, 새 평가 체계 시급</div>
+          <div class="card-desc">Stanford HAI 2026 AI Index는 AI 안전 평가 벤치마크가 모델 역량 발전 속도를 따라가지 못하고 있다고 경고했다. 특히 <strong>사이버보안·생물학적 위협</strong> 관련 능력 평가 도구가 부족하며, 제한 공개 모델(Claude Mythos, OpenAI Cyber Model)의 등장이 이를 더욱 복잡하게 만들고 있다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">AI 안전 평가 인프라 긴급 투자 필요성 부각. 국제 벤치마크 표준화 논의 가속 예상.</span>
+            <a class="source-link" href="https://www.artificialintelligence-news.com/news/ai-safety-benchmarks-stanford-hai-2026-report/" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-policy">⚖️<span>DOJ AI Task</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-policy">Policy</span></div>
+          <div class="card-title">미 법무부 AI 소송 태스크포스, 위헌 주(州) AI 법 도전 임무 — 연방 선점 집행 강화</div>
+          <div class="card-desc">미 법무부가 1월 출범한 <strong>AI 소송 태스크포스</strong>가 본격 활동을 시작했다. 위헌적으로 주간 통상을 규제하거나 기존 연방법에 의해 선점되는 주 AI 법률에 도전하는 단독 책임을 맡고 있다. Q1 기준 600개 이상의 AI 법안이 발의된 가운데, 연방-주 AI 규제 긴장이 2026년 최대 입법 쟁점으로 부상했다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">주 AI 규제 파편화 억제 효과. 연방 선점 원칙 강화로 AI 기업의 컴플라이언스 부담 완화 가능성.</span>
+            <a class="source-link" href="https://www.globalpolicywatch.com/2026/04/u-s-tech-legislative-regulatory-update-first-quarter-2026/" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-thumb">
+          <div class="thumb-placeholder ph-policy">🌍<span>EU AI Act</span></div>
+        </div>
+        <div class="card-body">
+          <div name="card-meta" class="card-meta"><span class="tag tag-policy">EU</span><span class="tag tag-policy">규제</span></div>
+          <div class="card-title">EU AI Act 단계 이행 본격화 — 캘리포니아 SB 53 안전 공시 의무화, 주요 AI 법 발효</div>
+          <div class="card-desc">EU AI Act가 단계적 의무 이행을 진행 중인 가운데, 캘리포니아 <strong>SB 53</strong>이 발효돼 AI 개발자에게 안전 공시 및 내부 고발자 보호 의무를 부과했다. 인디애나·유타·워싱턴주에서는 AI 보험금 심사 규제법이 통과됐다. AI 법안 600개가 발의된 미국에서 주별 규제 파편화가 심화되고 있다.</div>
+          <div class="card-impact">
+            <span class="impact-label">Impact</span>
+            <span class="impact-text">AI 기업 다중 관할 컴플라이언스 부담 급증. 글로벌 AI 거버넌스 통일성 확보 시급.</span>
+            <a class="source-link" href="https://www.eversheds-sutherland.com/en/united-states/insights/gloabl-ai-bulletin-april-2026" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div><strong>AI Daily Trends Report</strong> — 2026년 4월 18일 (토요일)</div>
+  <div class="gen-time">Generated: 2026-04-18 · Powered by Claude Sonnet 4.6 + Web Search</div>
+  <div class="sources">
+    <a href="https://techcrunch.com/2026/04/17/anthropic-launches-claude-design-a-new-product-for-creating-quick-visuals/">TechCrunch</a>
+    <a href="https://www.theaiconsultingnetwork.com/blog/xai-grok-4-3-beta-ai-model-cre-investors-2026">AI Consulting Network</a>
+    <a href="https://whatllm.org/blog/new-ai-models-april-2026">WhatLLM</a>
+    <a href="https://beforethecurve.medium.com/openai-and-anthropic-both-released-restricted-cyber-ai-models-in-7-days-heres-what-it-means-8084a8f13853">Before The Curve</a>
+    <a href="https://blog.google/innovation-and-ai/technology/developers-tools/gemma-4/">Google Blog</a>
+    <a href="https://techstartups.com/2026/04/17/deepseek-seeks-300m-in-first-fundraise-at-10b-valuation-as-ai-costs-surge/">Tech Startups</a>
+    <a href="https://www.cnbc.com/2026/04/08/openai-ipo-sarah-friar-retail-investors.html">CNBC</a>
+    <a href="https://thenextweb.com/news/stanford-ai-index-2026-china-us-performance-gap">The Next Web</a>
+    <a href="https://autogpt.net/state-of-ai-video/">AutoGPT</a>
+    <a href="https://www.eversheds-sutherland.com/en/united-states/insights/gloabl-ai-bulletin-april-2026">Eversheds Sutherland</a>
+  </div>
+</div>
+
+<script>
+(function(){
+  var reports=window.AI_REPORTS;
+  if(!reports||!reports.length)return;
+  var file=decodeURIComponent(location.pathname.split('/').pop()||'');
+  var idx=reports.findIndex(function(r){return r.file===file;});
+  if(idx===-1)return;
+  var older=idx+1<reports.length?reports[idx+1]:null;
+  var newer=idx-1>=0?reports[idx-1]:null;
+  function fmt(d){var p=d.split('-');return p[0]+'년 '+parseInt(p[1])+'월 '+parseInt(p[2])+'일';}
+  function dow(d){return['일','월','화','수','목','금','토'][new Date(d+'T12:00:00').getDay()]+'요일';}
+  var nav=document.getElementById('report-nav');
+  if(!nav)return;
+  var h='';
+  h+=older?'<a class="nav-btn" href="'+older.file+'">← 이전</a>':'<span class="nav-btn disabled">← 이전</span>';
+  h+='<span class="nav-current">'+fmt(reports[idx].date)+' '+dow(reports[idx].date)+'</span>';
+  h+=newer?'<a class="nav-btn" href="'+newer.file+'">다음 →</a>':'<span class="nav-btn disabled">다음 →</span>';
+  nav.innerHTML=h;
+})();
+// 핵심 뉴스 항목 클릭 → 관련 기사 이동 (키워드 매칭)
+(function(){
+  var items=document.querySelectorAll('.ko-summary li');
+  var cards=document.querySelectorAll('.card');
+  items.forEach(function(li){
+    var liText=li.textContent.toLowerCase();
+    var bestSrc=null,bestScore=0;
+    cards.forEach(function(c){
+      var t=c.querySelector('.card-title');
+      var s=c.querySelector('.source-link');
+      if(!t||!s)return;
+      var words=t.textContent.toLowerCase().split(/[\s·—\-,()]+/);
+      var score=0;
+      words.forEach(function(w){if(w.length>2&&liText.indexOf(w)!==-1)score++;});
+      if(score>bestScore){bestScore=score;bestSrc=s;}
+    });
+    if(!bestSrc||bestScore<1)return;
+    var a=document.createElement('a');
+    a.href=bestSrc.href;a.target='_blank';
+    a.style.cssText='color:inherit;text-decoration:none';
+    a.onmouseenter=function(){this.style.textDecoration='underline'};
+    a.onmouseleave=function(){this.style.textDecoration='none'};
+    a.innerHTML=li.innerHTML;
+    li.innerHTML='';li.appendChild(a);li.style.cursor='pointer';
+  });
+})();
+// 카드 제목 클릭 → 기사 이동
+document.querySelectorAll('.card').forEach(function(c){
+  var src=c.querySelector('.source-link');
+  var title=c.querySelector('.card-title');
+  if(!src||!title)return;
+  var a=document.createElement('a');
+  a.href=src.href;
+  a.target='_blank';
+  a.style.cssText='color:inherit;text-decoration:none';
+  a.onmouseenter=function(){this.style.textDecoration='underline'};
+  a.onmouseleave=function(){this.style.textDecoration='none'};
+  a.innerHTML=title.innerHTML;
+  title.innerHTML='';
+  title.appendChild(a);
+});
+</script>
+</body>
+</html>

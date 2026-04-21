@@ -4,6 +4,58 @@
 
 window.AI_REPORTS = [
   {
+    date: "2026-04-21",
+    file: "2026-04-21_AI_Daily_Report.html",
+    highlights: [
+      "MIT EmTech AI 개막 — 10대 AI 트렌드 첫 발표",
+      "PwC — 상위 20% 기업이 AI 경제 이익 74% 독식",
+      "Gartner — AI 성공 기업, 데이터 기반에 4배 더 투자",
+      "Nature — 복잡한 과제에서 인간이 AI 에이전트 압도",
+      "엔터프라이즈 AI 파일럿 95% 스케일업 실패 경고"
+    ],
+    categories: ["LLM", "VLM", "영상생성", "기업발표", "연구", "정책"],
+    itemCount: 18
+  },
+  {
+    date: "2026-04-20",
+    file: "2026-04-20_AI_Daily_Report.html",
+    highlights: [
+      "OpenAI Spud(GPT-5.5) 사전 학습 완료, 출시 임박",
+      "Oracle 3만 명 감원 — AI 데이터센터 투자 재원 마련",
+      "AI Scientist-v2, 자율 논문 최초 학회 게재 승인",
+      "Tufts 뉴로-심볼릭 VLA — 에너지 100배 절감 로봇",
+      "커스텀 LLM 학습 플랫폼 시장 2030 급성장 전망"
+    ],
+    categories: ["LLM", "VLM", "영상생성", "기업발표", "연구", "정책"],
+    itemCount: 18
+  },
+  {
+    date: "2026-04-19",
+    file: "2026-04-19_AI_Daily_Report.html",
+    highlights: [
+      "Cursor AI $20억 투자 — 기업가치 $500억 추진",
+      "4월 17일간 오픈웨이트 모델 4개 동시 출격",
+      "DeepSeek V4 출시 임박, 첫 외부 자금 유치",
+      "AI 에이전트 정체성 관리 위기 — 거버넌스 공백",
+      "Ring-a-Ding AI 전화 에이전트 월 $19 출시"
+    ],
+    categories: ["LLM", "VLM", "영상생성", "기업발표", "연구", "정책"],
+    itemCount: 18
+  },
+  {
+    date: "2026-04-18",
+    file: "2026-04-18_AI_Daily_Report.html",
+    highlights: [
+      "Anthropic Claude Design 출시 — Figma·Canva에 도전",
+      "xAI Grok 4.3 Beta — 파라미터 1조 개, 멀티모달 비디오",
+      "DeepSeek 창립 첫 외부 투자 $3억 모집 확인",
+      "Stanford AI Index 2026 — 미중 AI 격차 2.7%로 붕괴",
+      "OpenAI IPO 소매 투자자 배정 CFO 공식 확인"
+    ],
+    categories: ["LLM", "VLM", "영상생성", "기업발표", "연구", "정책"],
+    itemCount: 18
+  },
+  {
     date: "2026-04-17",
     file: "2026-04-17_AI_Daily_Report.html",
     highlights: [
